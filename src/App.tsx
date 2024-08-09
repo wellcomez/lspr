@@ -29,9 +29,8 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF' }}>
-        <div className="demo-logo-vertical" />
-        <BasicTree />
+      <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
+        <BasicTree ></BasicTree> 
         {/* <Menu
           theme="dark"
           mode="inline"
