@@ -50,8 +50,12 @@ func newFunction(r *http.Request) ([]file, error) {
 	}
 	for _, v := range dirs {
 		Path := filepath.Join(dir, v.Name())
+		Parent := filepath.Base(dir)
+		if v.IsDir(){
+			Parent=filepath.Join(Parent, v.Name())
+		}
 		ret = append(ret, file{
-			Parent:  filepath.Base(dir),
+			Parent:  Parent,
 			Name:    v.Name(),
 			DirName: dir,
 			IsDir:   v.IsDir(),

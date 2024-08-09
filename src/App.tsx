@@ -17,6 +17,13 @@ import {
 import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 const { Header, Sider, Content } = Layout;
+type fileresp = {
+  Path: string
+  IsDir: boolean
+  Name: string
+  dirname: string
+  parent: string
+}
 
 const BasicTree = () => {
   const onTreeStateChange = (state: any, event: any) => console.log(state, event);
@@ -31,6 +38,7 @@ const BasicTree = () => {
 type FileItem = {
   localPath: string;
   fileName: string;
+  IsDir: boolean;
   properties: {
     size: string;
     anything: string;
@@ -68,6 +76,9 @@ function createFileTree2(list: FileItem[]): Directory {
       }
       current = current[part] as Directory;
     }
+    if (file.IsDir && filePathParts.length > 1) {
+      continue
+    }
     current.files.push(file);
   }
   return expectedFileTree;
@@ -78,13 +89,12 @@ const App: React.FC = () => {
   const [fileList, setFileList] = useState<FileItem[]>([]);
 
   const setData = (data: any[any]) => {
-    let aa: FileItem[]=[]
-    data.forEach((element: { Path: any; Name: any; IsDir: any;localpath :any }) => {
-      const { Path, Name, IsDir ,localpath} = element
+    let aa: FileItem[] = []
+    data.forEach((f: fileresp) => {
       let a = {
-    IsDir:IsDir,
-        localPath: localpath,
-        fileName: Name,
+        IsDir: f.IsDir,
+        localPath: f.parent,
+        fileName: f.Name,
         properties: {
           size: '1 bit',
           anything: 'possible',
