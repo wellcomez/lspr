@@ -21,11 +21,16 @@ import {
   ToggleFileTree,
 } from 'react-toggle-file-tree';
 import axios from 'axios';
+
+// import parse from 'parse-filepath';
+
+
+// var parsePath = require('parse-filepath');
 const get_lang_extention=(lang: string) :[any?]=>{
   if (lang === "go") {
     return [StreamLanguage.define(go)]
   }
-  if (lang === "js") {
+  if (lang === "js"||lang==="ts"||lang==="css") {
     return [javascript({ jsx: true })]
   }
   if (lang === "md") {
@@ -42,6 +47,7 @@ function getFileExtension(filePath: string): string {
   if (lastDotIndex === -1) {
       return ''; // 如果没有找到点，则文件没有扩展名
   }
+  // var a=parse(filePath)
   return filePath.substring(lastDotIndex+1); // 返回包括点在内的扩展名
 }
 
