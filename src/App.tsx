@@ -26,6 +26,7 @@ type Dir = {
   root: string;
   rootname: string;
   files: fileresp[];
+  parent: string
 };
 
 type FileItem = {
@@ -41,31 +42,31 @@ type FileItem = {
 
 
 const App: React.FC = () => {
-  var a: Dir = { root: "/", rootname: "", files: [] }
+  var a: Dir = { root: "/", rootname: "", files: [], parent: "" };
   const [collapsed, setCollapsed] = useState(false);
-  const [fileList, setFileList] = useState<FileItem[]>([]);
+  // const [fileList, setFileList] = useState<FileItem[]>([]);
   const [dir, setDir] = useState(a);
-  const [rootname, setRootName] = useState("");
-  const [root, setRoot] = useState("/");
+  // const [rootname, setRootName] = useState("");
+  // const [root, setRoot] = useState("/");
   const setData = (data: Dir) => {
     setDir(data);
-    let aa: FileItem[] = []
-    setRootName(data.rootname)
-    setRoot(data.root)
-    data.files.forEach((f: fileresp) => {
-      let a = {
-        IsDir: f.IsDir,
-        localPath: f.parent,
-        fileName: f.Name,
-        properties: {
-          size: '1 bit',
-          anything: 'possible',
-          a: 'b',
-        },
-      }
-      aa.push(a)
-    });
-    setFileList(aa)
+    // let aa: FileItem[] = []
+    // setRootName(data.rootname)
+    // setRoot(data.root)
+    // data.files.forEach((f: fileresp) => {
+    //   let a = {
+    //     IsDir: f.IsDir,
+    //     localPath: f.parent,
+    //     fileName: f.Name,
+    //     properties: {
+    //       size: '1 bit',
+    //       anything: 'possible',
+    //       a: 'b',
+    //     },
+    //   }
+    //   aa.push(a)
+    // });
+    // setFileList(aa)
   }
   function createDir(list: Dir): Directory {
     const expectedFileTree: Directory = { files: [] };
@@ -120,13 +121,20 @@ const App: React.FC = () => {
   //   }
   //   return expectedFileTree;
   // }
-
+  const handle_click_file = (event: any) => {
+    const { fileName } = event as unknown as Directory
+    console.log('Clicked on paragraph:', fileName);
+    if ((fileName as unknown as string) == "..") {
+      fetchData(dir.parent)
+      return
+    }
+  }
   const handle_click_dir = (event: any) => {
     const { key } = event as unknown as Directory
     if (key as unknown as string == dir.rootname) {
       return
     }
-    fetchData(root + key)
+    fetchData(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
   const fetchData = async (root: string) => {
@@ -142,7 +150,7 @@ const App: React.FC = () => {
   };
   const url = "http://localhost:18080/path"
   useEffect(() => {
-    fetchData(root);
+    fetchData(dir.root);
   }, []);
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -153,10 +161,7 @@ const App: React.FC = () => {
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
           list={createDir(dir) as Directory}
-          handleFileClick={(event) => {
-            const { fileName } = event as unknown as Directory
-            console.log('Clicked on paragraph:', fileName);
-          }}
+          handleFileClick={handle_click_file}
           handleDirectoryClick={handle_click_dir}
         />
       </Sider>

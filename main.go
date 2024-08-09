@@ -38,6 +38,7 @@ type dir struct {
 	Root     string `json:"root"`
 	RootName string `json:"rootname"`
 	Files    []file `json:"files"`
+	Parent   string `json:"parent"`
 }
 
 func newFunction(r *http.Request) (dir, error) {
@@ -48,6 +49,7 @@ func newFunction(r *http.Request) (dir, error) {
 		Root:     ss,
 		RootName: filepath.Base(ss),
 		Files:    []file{},
+		Parent:   filepath.Dir(filepath.Dir(ss)),
 	}
 	cur, err := os.Getwd()
 	if err != nil {
@@ -58,7 +60,7 @@ func newFunction(r *http.Request) (dir, error) {
 	if err != nil {
 		return ret, err
 	}
-	if ss=="/"{
+	if ss == "/" {
 		ret.RootName = filepath.Base(cur)
 	}
 	for _, v := range dirs {
