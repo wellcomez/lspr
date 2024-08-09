@@ -11,16 +11,15 @@ import (
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
-	ss, err := newFunction(r, w)
+	ss, err := newFunction(r)
 	if err != nil {
 		println(ss)
 	}
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		// 其他 CORS 相关头
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-
+	// 其他 CORS 相关头
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
 	// buf,err=json.Marshal(ss)
 	w.Header().Set("Content-Type", "application/json")
@@ -29,12 +28,13 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 type file struct {
-	Path  string
-	IsDir bool
-	Name  string
+	Path      string
+	IsDir     bool
+	Name      string
+	LocalPath string `json:"localpath"`
 }
 
-func newFunction(r *http.Request, w http.ResponseWriter) ([]file, error) {
+func newFunction(r *http.Request) ([]file, error) {
 	ret := []file{}
 	path := r.URL.Path
 	ss := strings.TrimPrefix(path, "/path/")
@@ -48,10 +48,12 @@ func newFunction(r *http.Request, w http.ResponseWriter) ([]file, error) {
 		return ret, err
 	}
 	for _, v := range dirs {
+		Path := filepath.Join(dir, v.Name())
 		ret = append(ret, file{
-			Name:  v.Name(),
-			IsDir: v.IsDir(),
-			Path:  filepath.Join(dir, v.Name()),
+			LocalPath: filepath.Base(dir),
+			Name:      v.Name(),
+			IsDir:     v.IsDir(),
+			Path:      Path,
 		})
 	}
 	return ret, nil

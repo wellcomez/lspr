@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -6,6 +6,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
+import * as filepath from 'path'
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
 import FolderTree, { testData } from 'react-folder-tree';
 import {
@@ -26,6 +27,15 @@ const BasicTree = () => {
       onChange={onTreeStateChange}
     />
   );
+};
+type FileItem = {
+  localPath: string;
+  fileName: string;
+  properties: {
+    size: string;
+    anything: string;
+    a: string;
+  };
 };
 const newLocal = [
   {
@@ -49,11 +59,26 @@ const newLocal = [
 ];
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [filelist, setFileList] = useState(newLocal);
-  const setData = (data: any) => {
+  const [fileList, setFileList] = useState<FileItem[]>([]);
 
+  const setData = (data: any[any]) => {
+    let aa: FileItem[]=[]
+    data.forEach((element: { Path: any; Name: any; IsDir: any;localpath :any }) => {
+      const { Path, Name, IsDir ,localpath} = element
+      let a = {
+        localPath: localpath,
+        fileName: Name,
+        properties: {
+          size: '1 bit',
+          anything: 'possible',
+          a: 'b',
+        },
+      }
+      aa.push(a)
+    });
+    setFileList(aa)
   }
-  const url="http://localhost:18080/path/"
+  const url = "http://localhost:18080/path/"
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,7 +101,7 @@ const App: React.FC = () => {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
-          list={createFileTree(filelist) as Directory}
+          list={createFileTree(fileList) as Directory}
           handleFileClick={(event) => {
             const { fileName } = event as unknown as Directory
             console.log('Clicked on paragraph:', fileName);
