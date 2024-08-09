@@ -8,13 +8,11 @@ import {
 } from '@ant-design/icons';
 import * as filepath from 'path'
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
-import FolderTree, { testData } from 'react-folder-tree';
 import {
   createFileTree,
   Directory,
   ToggleFileTree,
 } from 'react-toggle-file-tree';
-import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 const { Header, Sider, Content } = Layout;
 type fileresp = {
@@ -30,16 +28,6 @@ type Dir = {
   files: fileresp[];
 };
 
-const BasicTree = () => {
-  const onTreeStateChange = (state: any, event: any) => console.log(state, event);
-
-  return (
-    <FolderTree
-      data={testData}
-      onChange={onTreeStateChange}
-    />
-  );
-};
 type FileItem = {
   localPath: string;
   fileName: string;
@@ -50,26 +38,6 @@ type FileItem = {
     a: string;
   };
 };
-// const newLocal = [
-//   {
-//     localPath: '/',
-//     fileName: 'inch.txt',
-//     properties: {
-//       size: '1 bit',
-//       anything: 'possible',
-//       a: 'b',
-//     },
-//   },
-//   {
-//     localPath: '/a',
-//     fileName: 'inch.txt',
-//     properties: {
-//       size: '1 bit',
-//       anything: 'possible',
-//       a: 'b',
-//     },
-//   }
-// ];
 
 
 const App: React.FC = () => {
