@@ -125,7 +125,7 @@ const App: React.FC = () => {
     const { fileName } = event as unknown as Directory
     console.log('Clicked on paragraph:', fileName);
     if ((fileName as unknown as string) == "..") {
-      fetchData(dir.parent)
+      open_dir(dir.parent)
       return
     }
   }
@@ -134,10 +134,10 @@ const App: React.FC = () => {
     if (key as unknown as string == dir.rootname) {
       return
     }
-    fetchData(dir.root + key)
+    open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
-  const fetchData = async (root: string) => {
+  const open_dir = async (root: string) => {
     try {
       let u = url + root
       const response = await axios.get(u); // 使用 Axios 发起请求
@@ -150,7 +150,7 @@ const App: React.FC = () => {
   };
   const url = "http://localhost:18080/path"
   useEffect(() => {
-    fetchData(dir.root);
+    open_dir(dir.root);
   }, []);
   const {
     token: { colorBgContainer, borderRadiusLG },
