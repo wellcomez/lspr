@@ -41,7 +41,7 @@ const App: React.FC = () => {
       },
     },
     {
-      localPath: '/',
+      localPath: '/a',
       fileName: 'inch.txt',
       properties: {
         size: '1 bit',
@@ -49,20 +49,19 @@ const App: React.FC = () => {
         a: 'b',
       },
     }]
-  const handleFileClick = () => {
-    console.log('handleFileClick');
-  };
-
-  const handleDirectoryClick = () => {
-    console.log('handleDirectoryClick');
-  };
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
           list={createFileTree(list) as Directory}
-          handleFileClick={handleFileClick}
-          handleDirectoryClick={handleDirectoryClick}
+          handleFileClick={(event) => {
+            const {fileName}=event as unknown as Directory 
+            console.log('Clicked on paragraph:', fileName);
+          }}
+          handleDirectoryClick={(event) => {
+            const {key}=event as unknown as Directory 
+            console.log('Clicked on paragraph:', event);
+          }}
         />
       </Sider>
       <Layout>
