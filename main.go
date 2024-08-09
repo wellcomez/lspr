@@ -3,13 +3,38 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
+func get_file_data(r *http.Request) ([]byte, error) {
+	path := r.URL.Path
+	ss := strings.TrimPrefix(path, "/open")
+	cur, err := os.Getwd()
+	if err != nil {
+		return []byte{}, err
+	}
+	dir := filepath.Join(cur, ss)
+	return os.ReadFile(dir)
+}
+func openfile(w http.ResponseWriter, r *http.Request) {
+	data, err := get_file_data(r)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// 其他 CORS 相关头
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if err == nil {
+		fmt.Fprint(w, string(data))
+	} else {
+		fmt.Fprint(w, err.Error())
+	}
+
+}
 func helloWorld(w http.ResponseWriter, r *http.Request) {
 	ss, err := newFunction(r)
 	if err != nil {
@@ -84,6 +109,7 @@ func newFunction(r *http.Request) (dir, error) {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/path/{path:.*}", helloWorld).Methods("GET")
+	r.HandleFunc("/open/{path:.*}", openfile).Methods("GET")
 	// http.HandleFunc("/path", helloWorld) // 注册路由处理函数
 	fmt.Println("Server listening on :18080")
 	if err := http.ListenAndServe(":18080", r); err != nil {

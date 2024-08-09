@@ -122,11 +122,17 @@ const App: React.FC = () => {
   //   return expectedFileTree;
   // }
   const handle_click_file = (event: any) => {
-    const { fileName } = event as unknown as Directory
-    console.log('Clicked on paragraph:', fileName);
-    if ((fileName as unknown as string) == "..") {
+    const file = event as unknown as FileItem 
+    let name = file.fileName
+    if (name == "..") {
       open_dir(dir.parent)
-      return
+    }else{
+      if (dir.rootname==file.localPath){
+        open_file("/"+name)
+        return
+      }else{
+        open_file(dir.root+name)
+      }
     }
   }
   const handle_click_dir = (event: any) => {
@@ -137,9 +143,19 @@ const App: React.FC = () => {
     open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
+const open_file = async (root: string) => {
+    try {
+      let u = url_open_file + root
+      const response = await axios.get(u); // 使用 Axios 发起请
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+    } finally {
+    }
+  };
   const open_dir = async (root: string) => {
     try {
-      let u = url + root
+      let u = url_open_dir + root
       const response = await axios.get(u); // 使用 Axios 发起请求
       // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
       setData(response.data);
@@ -148,7 +164,8 @@ const App: React.FC = () => {
     } finally {
     }
   };
-  const url = "http://localhost:18080/path"
+  const url_open_dir = "http://localhost:18080/path"
+  const url_open_file = "http://localhost:18080/open"
   useEffect(() => {
     open_dir(dir.root);
   }, []);
