@@ -8,7 +8,11 @@ import {
 } from '@ant-design/icons';
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
 import FolderTree, { testData } from 'react-folder-tree';
-
+import {
+  createFileTree,
+  Directory,
+  ToggleFileTree,
+} from 'react-toggle-file-tree';
 const { Header, Sider, Content } = Layout;
 
 const BasicTree = () => {
@@ -16,8 +20,8 @@ const BasicTree = () => {
 
   return (
     <FolderTree
-      data={ testData } 
-      onChange={ onTreeStateChange }
+      data={testData}
+      onChange={onTreeStateChange}
     />
   );
 };
@@ -26,33 +30,40 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const list = [
+    {
+      localPath: '/',
+      fileName: 'inch.txt',
+      properties: {
+        size: '1 bit',
+        anything: 'possible',
+        a: 'b',
+      },
+    },
+    {
+      localPath: '/',
+      fileName: 'inch.txt',
+      properties: {
+        size: '1 bit',
+        anything: 'possible',
+        a: 'b',
+      },
+    }]
+  const handleFileClick = () => {
+    console.log('handleFileClick');
+  };
 
+  const handleDirectoryClick = () => {
+    console.log('handleDirectoryClick');
+  };
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
-        <BasicTree ></BasicTree> 
-        {/* <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[
-            {
-              key: '1',
-              icon: <UserOutlined />,
-              label: 'nav 1',
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'nav 2',
-            },
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: 'nav 3',
-            },
-          ]}
-        /> */}
+        <ToggleFileTree
+          list={createFileTree(list) as Directory}
+          handleFileClick={handleFileClick}
+          handleDirectoryClick={handleDirectoryClick}
+        />
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
