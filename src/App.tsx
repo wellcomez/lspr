@@ -7,6 +7,13 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
+import CodeMirror from '@uiw/react-codemirror';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
+import { StreamLanguage } from '@codemirror/language';
+import { go } from '@codemirror/legacy-modes/mode/go';
+import { javascript } from '@codemirror/lang-javascript';
+import {monokai} from '@uiw/codemirror-theme-monokai'
 import {
   createFileTree,
   Directory,
@@ -45,7 +52,7 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   // const [fileList, setFileList] = useState<FileItem[]>([]);
   const [dir, setDir] = useState(a);
-  const [content, setContent] = useState("content");
+  const [content, setContent] = useState("");
   // const [rootname, setRootName] = useState("");
   // const [root, setRoot] = useState("/");
   const setData = (data: Dir) => {
@@ -205,7 +212,16 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {content}
+          <CodeMirror 
+          height='800px'
+          theme={monokai}
+            value={content} extensions={
+            [
+              javascript({ jsx: true }),
+              markdown({ base: markdownLanguage, codeLanguages: languages }),
+              [StreamLanguage.define(go)],
+            ]} />;
+          {/* {content} */}
         </Content>
       </Layout>
     </Layout>
