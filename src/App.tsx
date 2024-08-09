@@ -13,7 +13,8 @@ import { languages } from '@codemirror/language-data';
 import { StreamLanguage } from '@codemirror/language';
 import { go } from '@codemirror/legacy-modes/mode/go';
 import { javascript } from '@codemirror/lang-javascript';
-import {monokai} from '@uiw/codemirror-theme-monokai'
+import { monokai } from '@uiw/codemirror-theme-monokai';
+import { json } from '@codemirror/lang-json';
 import {
   createFileTree,
   Directory,
@@ -52,6 +53,8 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   // const [fileList, setFileList] = useState<FileItem[]>([]);
   const [dir, setDir] = useState(a);
+  const [imagesrc, setImagesrc] = useState("")
+  const [enabldcode, setEnabledCode] = useState(true);
   const [content, setContent] = useState("");
   // const [rootname, setRootName] = useState("");
   // const [root, setRoot] = useState("/");
@@ -150,11 +153,25 @@ const App: React.FC = () => {
     open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
+  function isPng(fileName: string): boolean {
+    // 使用正则表达式匹配文件名中的扩展名部分
+    const fileExtension = fileName.match(/\.(\w+)$/);
+    // 检查是否有匹配结果并且扩展名是否为 "png"
+    return fileExtension ? fileExtension[1].toLowerCase() === 'png' : false;
+  }
+
   const open_file = async (root: string) => {
     try {
       let u = url_open_file + root
-      const response = await axios.get(u); // 使用 Axios 发起请
+      if (isPng(u)) {
+        setImagesrc(u)
+        setEnabledCode(false)
+        return
+      }
+      setEnabledCode(true)
+      const response = await axios.get(u, { responseType: 'text' }); // 使用 Axios 发起请
       console.log(response.data)
+
       setContent(response.data)
     } catch (error) {
       console.log(error)
@@ -212,15 +229,18 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <CodeMirror 
-          height='800px'
-          theme={monokai}
+          <Content hidden={enabldcode}><img src={imagesrc}></img></Content>
+          <CodeMirror
+            hidden={!enabldcode}
+            height='800px'
+            theme={monokai}
             value={content} extensions={
-            [
-              javascript({ jsx: true }),
-              markdown({ base: markdownLanguage, codeLanguages: languages }),
-              [StreamLanguage.define(go)],
-            ]} />;
+              [
+                json(),
+                javascript({ jsx: true }),
+                markdown({ base: markdownLanguage, codeLanguages: languages }),
+                [StreamLanguage.define(go)],
+              ]} />;
           {/* {content} */}
         </Content>
       </Layout>

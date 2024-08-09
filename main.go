@@ -22,17 +22,13 @@ func get_file_data(r *http.Request) ([]byte, error) {
 	return os.ReadFile(dir)
 }
 func openfile(w http.ResponseWriter, r *http.Request) {
-	data, err := get_file_data(r)
+	data, _:= get_file_data(r)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// 其他 CORS 相关头
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-	if err == nil {
-		fmt.Fprint(w, string(data))
-	} else {
-		fmt.Fprint(w, err.Error())
-	}
+	w.Write(data)
 
 }
 func helloWorld(w http.ResponseWriter, r *http.Request) {
