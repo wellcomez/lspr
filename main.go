@@ -28,10 +28,11 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 type file struct {
-	Path      string
-	IsDir     bool
-	Name      string
-	LocalPath string `json:"localpath"`
+	Path    string
+	IsDir   bool
+	Name    string
+	DirName string `json:"dirname"`
+	Parent  string `json:"parent"`
 }
 
 func newFunction(r *http.Request) ([]file, error) {
@@ -50,10 +51,11 @@ func newFunction(r *http.Request) ([]file, error) {
 	for _, v := range dirs {
 		Path := filepath.Join(dir, v.Name())
 		ret = append(ret, file{
-			LocalPath: filepath.Base(dir),
-			Name:      v.Name(),
-			IsDir:     v.IsDir(),
-			Path:      Path,
+			Parent:  filepath.Base(dir),
+			Name:    v.Name(),
+			DirName: dir,
+			IsDir:   v.IsDir(),
+			Path:    Path,
 		})
 	}
 	return ret, nil
