@@ -87,10 +87,17 @@ function createFileTree2(list: FileItem[]): Directory {
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [fileList, setFileList] = useState<FileItem[]>([]);
-
+  const [rootname, setRootName] = useState("");
+  let root = "/"
   const setData = (data: any[any]) => {
     let aa: FileItem[] = []
+    let topname = ""
     data.forEach((f: fileresp) => {
+      if (topname.length == 0) {
+        topname = f.parent
+      } else if (f.parent.length < topname.length) {
+        topname = f.parent
+      }
       let a = {
         IsDir: f.IsDir,
         localPath: f.parent,
@@ -103,22 +110,25 @@ const App: React.FC = () => {
       }
       aa.push(a)
     });
+    if (rootname.length == 0) {
+      setRootName(topname)
+    }
     setFileList(aa)
   }
-  const url = "http://localhost:18080/path/"
+  const fetchData = async (root: string) => {
+    try {
+      let u = url + root
+      const response = await axios.get(u); // 使用 Axios 发起请求
+      // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
+      setData(response.data);
+    } catch (error) {
+      console.log(error)
+    } finally {
+    }
+  };
+  const url = "http://localhost:18080/path"
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(url); // 使用 Axios 发起请求
-        // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
-        setData(response.data);
-      } catch (error) {
-        console.log(error)
-      } finally {
-      }
-    };
-
-    fetchData();
+    fetchData(root);
   }, []);
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -135,6 +145,10 @@ const App: React.FC = () => {
           }}
           handleDirectoryClick={(event) => {
             const { key } = event as unknown as Directory
+            if (key as unknown as string == rootname) {
+              return
+            }
+            fetchData(root+key)
             console.log('Clicked on paragraph:', event);
           }}
         />

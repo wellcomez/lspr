@@ -67,7 +67,7 @@ func newFunction(r *http.Request) ([]file, error) {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/path/{rest:.*}", helloWorld).Methods("GET")
+	r.HandleFunc("/path/{path:.*}", helloWorld).Methods("GET")
 	// http.HandleFunc("/path", helloWorld) // 注册路由处理函数
 	fmt.Println("Server listening on :18080")
 	if err := http.ListenAndServe(":18080", r); err != nil {
