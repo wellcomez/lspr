@@ -28,18 +28,9 @@ const BasicTree = () => {
     />
   );
 };
-type FileResp = {
-  Path: string;
-  IsDir: boolean;
-  Name: string;
-  dirname: string;
-  parent: string; 
-};
 type FileItem = {
-  IsDir: boolean;
   localPath: string;
   fileName: string;
-  parent: string;
   properties: {
     size: string;
     anything: string;
@@ -66,25 +57,8 @@ const newLocal = [
     },
   }
 ];
-function createFileTree2xxx(list: FileItem[]): Directory {
-  const expectedFileTree: Directory = { files: [] };
-  
-  for (const file of list) {
-    const filePathParts = file.localPath.split('/').filter(Boolean);
-    let current = expectedFileTree;
-    for (const part of filePathParts) {
-      if (!current[part]) {
-        current[part] = { files: [] };
-      }
-      current = current[part] as Directory;
-    }
-    current.files.push(file);
-  }
-  return expectedFileTree;
-}
 function createFileTree2(list: FileItem[]): Directory {
   const expectedFileTree: Directory = { files: [] };
-  
   for (const file of list) {
     const filePathParts = file.localPath.split('/').filter(Boolean);
     let current = expectedFileTree;
@@ -103,14 +77,14 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [fileList, setFileList] = useState<FileItem[]>([]);
 
-  const setData = (data: FileResp[]) => {
-    let aa: FileItem[] = []
-    data.forEach((e: FileResp) => {
+  const setData = (data: any[any]) => {
+    let aa: FileItem[]=[]
+    data.forEach((element: { Path: any; Name: any; IsDir: any;localpath :any }) => {
+      const { Path, Name, IsDir ,localpath} = element
       let a = {
-        IsDir: e.IsDir,
-        localPath: e.dirname,
-        fileName: e.Name,
-        parent:e.parent,
+    IsDir:IsDir,
+        localPath: localpath,
+        fileName: Name,
         properties: {
           size: '1 bit',
           anything: 'possible',
@@ -127,7 +101,7 @@ const App: React.FC = () => {
       try {
         const response = await axios.get(url); // 使用 Axios 发起请求
         // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
-        setData(response.data as [FileResp]);
+        setData(response.data);
       } catch (error) {
         console.log(error)
       } finally {
