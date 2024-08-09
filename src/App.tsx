@@ -13,6 +13,7 @@ import {
   Directory,
   ToggleFileTree,
 } from 'react-toggle-file-tree';
+import userEvent from '@testing-library/user-event';
 const { Header, Sider, Content } = Layout;
 
 const BasicTree = () => {
@@ -25,35 +26,37 @@ const BasicTree = () => {
     />
   );
 };
+const newLocal = [
+  {
+    localPath: '/',
+    fileName: 'inch.txt',
+    properties: {
+      size: '1 bit',
+      anything: 'possible',
+      a: 'b',
+    },
+  },
+  {
+    localPath: '/a',
+    fileName: 'inch.txt',
+    properties: {
+      size: '1 bit',
+      anything: 'possible',
+      a: 'b',
+    },
+  }
+];
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [filelist ,setFileList]=useState(newLocal)
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const list = [
-    {
-      localPath: '/',
-      fileName: 'inch.txt',
-      properties: {
-        size: '1 bit',
-        anything: 'possible',
-        a: 'b',
-      },
-    },
-    {
-      localPath: '/a',
-      fileName: 'inch.txt',
-      properties: {
-        size: '1 bit',
-        anything: 'possible',
-        a: 'b',
-      },
-    }]
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
-          list={createFileTree(list) as Directory}
+          list={createFileTree(filelist) as Directory}
           handleFileClick={(event) => {
             const {fileName}=event as unknown as Directory 
             console.log('Clicked on paragraph:', fileName);
