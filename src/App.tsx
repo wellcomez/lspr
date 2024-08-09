@@ -21,6 +21,30 @@ import {
   ToggleFileTree,
 } from 'react-toggle-file-tree';
 import axios from 'axios';
+const get_lang_extention=(lang: string) :[any?]=>{
+  if (lang === "go") {
+    return [StreamLanguage.define(go)]
+  }
+  if (lang === "js") {
+    return [javascript({ jsx: true })]
+  }
+  if (lang === "md") {
+    return [markdown({ base: markdownLanguage, codeLanguages: languages })]
+
+  }
+  if (lang === "json") {
+    return [json()]
+  }
+  return []
+}
+function getFileExtension(filePath: string): string {
+  const lastDotIndex = filePath.lastIndexOf('.');
+  if (lastDotIndex === -1) {
+      return ''; // 如果没有找到点，则文件没有扩展名
+  }
+  return filePath.substring(lastDotIndex+1); // 返回包括点在内的扩展名
+}
+
 const { Header, Sider, Content } = Layout;
 type fileresp = {
   Path: string
@@ -53,6 +77,7 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   // const [fileList, setFileList] = useState<FileItem[]>([]);
   const [dir, setDir] = useState(a);
+  const [lang, setLang] = useState("");
   const [imagesrc, setImagesrc] = useState("")
   const [enabldcode, setEnabledCode] = useState(true);
   const [content, setContent] = useState("");
@@ -169,9 +194,10 @@ const App: React.FC = () => {
         return
       }
       setEnabledCode(true)
+      let ext=getFileExtension(root)
+      setLang(ext)
       const response = await axios.get(u, { responseType: 'text' }); // 使用 Axios 发起请
       console.log(response.data)
-
       setContent(response.data)
     } catch (error) {
       console.log(error)
@@ -234,13 +260,8 @@ const App: React.FC = () => {
             hidden={!enabldcode}
             height='800px'
             theme={monokai}
-            value={content} extensions={
-              [
-                json(),
-                javascript({ jsx: true }),
-                markdown({ base: markdownLanguage, codeLanguages: languages }),
-                [StreamLanguage.define(go)],
-              ]} />;
+            value={content} 
+            extensions={get_lang_extention(lang)} />;
           {/* {content} */}
         </Content>
       </Layout>
