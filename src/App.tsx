@@ -57,6 +57,22 @@ const newLocal = [
     },
   }
 ];
+function createFileTree2(list: FileItem[]): Directory {
+  const expectedFileTree: Directory = { files: [] };
+  for (const file of list) {
+    const filePathParts = file.localPath.split('/').filter(Boolean);
+    let current = expectedFileTree;
+    for (const part of filePathParts) {
+      if (!current[part]) {
+        current[part] = { files: [] };
+      }
+      current = current[part] as Directory;
+    }
+    current.files.push(file);
+  }
+  return expectedFileTree;
+}
+
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [fileList, setFileList] = useState<FileItem[]>([]);
@@ -101,7 +117,7 @@ const App: React.FC = () => {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
-          list={createFileTree(fileList) as Directory}
+          list={createFileTree2(fileList) as Directory}
           handleFileClick={(event) => {
             const { fileName } = event as unknown as Directory
             console.log('Clicked on paragraph:', fileName);
