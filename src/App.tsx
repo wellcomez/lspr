@@ -50,51 +50,37 @@ type FileItem = {
     a: string;
   };
 };
-const newLocal = [
-  {
-    localPath: '/',
-    fileName: 'inch.txt',
-    properties: {
-      size: '1 bit',
-      anything: 'possible',
-      a: 'b',
-    },
-  },
-  {
-    localPath: '/a',
-    fileName: 'inch.txt',
-    properties: {
-      size: '1 bit',
-      anything: 'possible',
-      a: 'b',
-    },
-  }
-];
-function createFileTree2(list: FileItem[]): Directory {
-  const expectedFileTree: Directory = { files: [] };
-  for (const file of list) {
-    const filePathParts = file.localPath.split('/').filter(Boolean);
-    let current = expectedFileTree;
-    for (const part of filePathParts) {
-      if (!current[part]) {
-        current[part] = { files: [] };
-      }
-      current = current[part] as Directory;
-    }
-    if (file.IsDir && filePathParts.length > 1) {
-      continue
-    }
-    current.files.push(file);
-  }
-  return expectedFileTree;
-}
+// const newLocal = [
+//   {
+//     localPath: '/',
+//     fileName: 'inch.txt',
+//     properties: {
+//       size: '1 bit',
+//       anything: 'possible',
+//       a: 'b',
+//     },
+//   },
+//   {
+//     localPath: '/a',
+//     fileName: 'inch.txt',
+//     properties: {
+//       size: '1 bit',
+//       anything: 'possible',
+//       a: 'b',
+//     },
+//   }
+// ];
+
 
 const App: React.FC = () => {
+  var a: Dir = { root: "/", rootname: "", files: [] }
   const [collapsed, setCollapsed] = useState(false);
   const [fileList, setFileList] = useState<FileItem[]>([]);
+  const [dir, setDir] = useState(a);
   const [rootname, setRootName] = useState("");
-  const [root , setRoot] = useState("/");
+  const [root, setRoot] = useState("/");
   const setData = (data: Dir) => {
+    setDir(data);
     let aa: FileItem[] = []
     setRootName(data.rootname)
     setRoot(data.root)
@@ -113,9 +99,63 @@ const App: React.FC = () => {
     });
     setFileList(aa)
   }
+  function createDir(list: Dir): Directory {
+    const expectedFileTree: Directory = { files: [] };
+    const root: Directory = { files: [] };
+    let a = {
+      localPath: "..",
+      fileName: "..",
+      properties: {
+        size: '1 bit',
+        anything: 'possible',
+        a: 'b',
+      },
+    }
+    root.files.push(a)
+    // root[".."] = { files: [] }
+
+    expectedFileTree[list.rootname] = root
+    dir.files.forEach(f => {
+      if (f.IsDir) {
+        root[f.Name] = { files: [] }
+      } else {
+        let a = {
+          IsDir: f.IsDir,
+          localPath: f.parent,
+          fileName: f.Name,
+          properties: {
+            size: '1 bit',
+            anything: 'possible',
+            a: 'b',
+          },
+        }
+        root.files.push(a)
+      }
+    });
+    return expectedFileTree
+  }
+  // function createFileTree2(list: FileItem[]): Directory {
+  //   const expectedFileTree: Directory = { files: [] };
+  //   for (const file of list) {
+  //     const filePathParts = file.localPath.split('/').filter(Boolean);
+  //     let current = expectedFileTree;
+  //     for (const part of filePathParts) {
+  //       if (!current[part]) {
+  //         current[part] = { files: [] };
+  //       }
+  //       current = current[part] as Directory;
+  //     }
+  //     if (file.IsDir && filePathParts.length > 1) {
+  //       continue
+  //     }
+  //     current.files.push(file);
+  //   }
+  //   return expectedFileTree;
+  // }
+
   const handle_click_dir = (event: any) => {
     const { key } = event as unknown as Directory
-    if (key as unknown as string == rootname) {
+    if (key as unknown as string == dir.rootname) {
       return
     }
     fetchData(root + key)
@@ -144,7 +184,7 @@ const App: React.FC = () => {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
-          list={createFileTree2(fileList) as Directory}
+          list={createDir(dir) as Directory}
           handleFileClick={(event) => {
             const { fileName } = event as unknown as Directory
             console.log('Clicked on paragraph:', fileName);
