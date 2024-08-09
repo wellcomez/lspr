@@ -13,7 +13,7 @@ import (
 func helloWorld(w http.ResponseWriter, r *http.Request) {
 	ss, err := newFunction(r)
 	if err != nil {
-		println(ss)
+		println(ss.RootName)
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -34,11 +34,21 @@ type file struct {
 	DirName string `json:"dirname"`
 	Parent  string `json:"parent"`
 }
+type dir struct {
+	Root     string `json:"root"`
+	RootName string `json:"rootname"`
+	Files    []file `json:"files"`
+}
 
-func newFunction(r *http.Request) ([]file, error) {
-	ret := []file{}
+func newFunction(r *http.Request) (dir, error) {
 	path := r.URL.Path
-	ss := strings.TrimPrefix(path, "/path/")
+	files := []file{}
+	ss := strings.TrimPrefix(path, "/path")
+	ret := dir{
+		Root:     ss,
+		RootName: filepath.Base(ss),
+		Files:    []file{},
+	}
 	cur, err := os.Getwd()
 	if err != nil {
 		return ret, err
@@ -48,13 +58,16 @@ func newFunction(r *http.Request) ([]file, error) {
 	if err != nil {
 		return ret, err
 	}
+	if ss=="/"{
+		ret.RootName = filepath.Base(cur)
+	}
 	for _, v := range dirs {
 		Path := filepath.Join(dir, v.Name())
 		Parent := filepath.Base(dir)
-		if v.IsDir(){
-			Parent=filepath.Join(Parent, v.Name())
+		if v.IsDir() {
+			Parent = filepath.Join(Parent, v.Name())
 		}
-		ret = append(ret, file{
+		files = append(files, file{
 			Parent:  Parent,
 			Name:    v.Name(),
 			DirName: dir,
@@ -62,6 +75,7 @@ func newFunction(r *http.Request) ([]file, error) {
 			Path:    Path,
 		})
 	}
+	ret.Files = files
 	return ret, nil
 }
 

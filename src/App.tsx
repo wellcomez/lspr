@@ -24,6 +24,11 @@ type fileresp = {
   dirname: string
   parent: string
 }
+type Dir = {
+  root: string;
+  rootname: string;
+  files: fileresp[];
+};
 
 const BasicTree = () => {
   const onTreeStateChange = (state: any, event: any) => console.log(state, event);
@@ -88,16 +93,12 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [fileList, setFileList] = useState<FileItem[]>([]);
   const [rootname, setRootName] = useState("");
-  let root = "/"
-  const setData = (data: any[any]) => {
+  const [root , setRoot] = useState("/");
+  const setData = (data: Dir) => {
     let aa: FileItem[] = []
-    let topname = ""
-    data.forEach((f: fileresp) => {
-      if (topname.length == 0) {
-        topname = f.parent
-      } else if (f.parent.length < topname.length) {
-        topname = f.parent
-      }
+    setRootName(data.rootname)
+    setRoot(data.root)
+    data.files.forEach((f: fileresp) => {
       let a = {
         IsDir: f.IsDir,
         localPath: f.parent,
@@ -110,10 +111,15 @@ const App: React.FC = () => {
       }
       aa.push(a)
     });
-    if (rootname.length == 0) {
-      setRootName(topname)
-    }
     setFileList(aa)
+  }
+  const handle_click_dir = (event: any) => {
+    const { key } = event as unknown as Directory
+    if (key as unknown as string == rootname) {
+      return
+    }
+    fetchData(root + key)
+    console.log('Clicked on paragraph:', event);
   }
   const fetchData = async (root: string) => {
     try {
@@ -143,14 +149,7 @@ const App: React.FC = () => {
             const { fileName } = event as unknown as Directory
             console.log('Clicked on paragraph:', fileName);
           }}
-          handleDirectoryClick={(event) => {
-            const { key } = event as unknown as Directory
-            if (key as unknown as string == rootname) {
-              return
-            }
-            fetchData(root+key)
-            console.log('Clicked on paragraph:', event);
-          }}
+          handleDirectoryClick={handle_click_dir}
         />
       </Sider>
       <Layout>
