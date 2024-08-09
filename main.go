@@ -15,6 +15,13 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		println(ss)
 	}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		// 其他 CORS 相关头
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+
 	// buf,err=json.Marshal(ss)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ss)

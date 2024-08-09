@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -14,6 +14,7 @@ import {
   ToggleFileTree,
 } from 'react-toggle-file-tree';
 import userEvent from '@testing-library/user-event';
+import axios from 'axios';
 const { Header, Sider, Content } = Layout;
 
 const BasicTree = () => {
@@ -48,21 +49,40 @@ const newLocal = [
 ];
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [filelist ,setFileList]=useState(newLocal)
+  const [filelist, setFileList] = useState(newLocal);
+  const setData = (data: any) => {
+
+  }
+  const url="http://localhost:18080/path/"
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url); // 使用 Axios 发起请求
+        // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
+        setData(response.data);
+      } catch (error) {
+        console.log(error)
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, []);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         <ToggleFileTree
           list={createFileTree(filelist) as Directory}
           handleFileClick={(event) => {
-            const {fileName}=event as unknown as Directory 
+            const { fileName } = event as unknown as Directory
             console.log('Clicked on paragraph:', fileName);
           }}
           handleDirectoryClick={(event) => {
-            const {key}=event as unknown as Directory 
+            const { key } = event as unknown as Directory
             console.log('Clicked on paragraph:', event);
           }}
         />
