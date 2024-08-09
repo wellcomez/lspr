@@ -6,7 +6,6 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
-import * as filepath from 'path'
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
 import {
   createFileTree,
@@ -46,6 +45,7 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   // const [fileList, setFileList] = useState<FileItem[]>([]);
   const [dir, setDir] = useState(a);
+  const [content, setContent] = useState("content");
   // const [rootname, setRootName] = useState("");
   // const [root, setRoot] = useState("/");
   const setData = (data: Dir) => {
@@ -122,16 +122,16 @@ const App: React.FC = () => {
   //   return expectedFileTree;
   // }
   const handle_click_file = (event: any) => {
-    const file = event as unknown as FileItem 
+    const file = event as unknown as FileItem
     let name = file.fileName
     if (name == "..") {
       open_dir(dir.parent)
-    }else{
-      if (dir.rootname==file.localPath){
-        open_file("/"+name)
-        return
-      }else{
-        open_file(dir.root+name)
+    } else {
+      if (dir.root.length == 1) {
+        open_file("/" + name)
+      } else {
+        var path = [dir.root, name].join("/")
+        open_file(path)
       }
     }
   }
@@ -143,11 +143,12 @@ const App: React.FC = () => {
     open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
-const open_file = async (root: string) => {
+  const open_file = async (root: string) => {
     try {
       let u = url_open_file + root
       const response = await axios.get(u); // 使用 Axios 发起请
       console.log(response.data)
+      setContent(response.data)
     } catch (error) {
       console.log(error)
     } finally {
@@ -204,7 +205,7 @@ const open_file = async (root: string) => {
             borderRadius: borderRadiusLG,
           }}
         >
-          Content
+          {content}
         </Content>
       </Layout>
     </Layout>
