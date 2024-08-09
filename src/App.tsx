@@ -6,10 +6,21 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Button, Layout, Menu, theme } from 'antd';
+import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
+import FolderTree, { testData } from 'react-folder-tree';
 
 const { Header, Sider, Content } = Layout;
 
+const BasicTree = () => {
+  const onTreeStateChange = (state: any, event: any) => console.log(state, event);
+
+  return (
+    <FolderTree
+      data={ testData } 
+      onChange={ onTreeStateChange }
+    />
+  );
+};
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -18,9 +29,10 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF' }}>
         <div className="demo-logo-vertical" />
-        <Menu
+        <BasicTree />
+        {/* <Menu
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['1']}
@@ -41,7 +53,7 @@ const App: React.FC = () => {
               label: 'nav 3',
             },
           ]}
-        />
+        /> */}
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
