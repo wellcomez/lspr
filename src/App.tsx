@@ -15,40 +15,64 @@ import { go } from '@codemirror/legacy-modes/mode/go';
 import { javascript } from '@codemirror/lang-javascript';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { json } from '@codemirror/lang-json';
+import { cpp } from '@codemirror/lang-cpp';
+import { css } from '@codemirror/lang-css';
+import { python } from '@codemirror/lang-python';
+import { yaml } from '@codemirror/lang-yaml';
 import {
-  createFileTree,
   Directory,
   ToggleFileTree,
 } from 'react-toggle-file-tree';
 import axios from 'axios';
+import path from 'path-browserify';
 
 // import parse from 'parse-filepath';
 
 
 // var parsePath = require('parse-filepath');
-const get_lang_extention=(lang: string) :[any?]=>{
-  if (lang === "go") {
-    return [StreamLanguage.define(go)]
+const get_lang_extention = (lang: [any?]): [any?] => {
+  return lang
+}
+class langType {
+  constructor(extset: Array<string>, fileset: Array<string>, type: string, extension: [any]) {
+    this.extset = new Set(extset)
+    this.fileset = new Set(fileset)
+    this.type = type
+    this.extension = extension
   }
-  if (lang === "js"||lang==="ts"||lang==="css") {
-    return [javascript({ jsx: true })]
+  extset: Set<string> = new Set()
+  fileset: Set<string> = new Set()
+  extension: [any]
+  type: string
+  is(filePath: string): [any] | undefined {
+    const { base, ext } = path.parse(filePath)
+    if (this.fileset.has(base)) {
+      return this.extension
+    }
+    if (this.extset.has(ext)) {
+      return this.extension
+    }
+    return undefined
   }
-  if (lang === "md") {
-    return [markdown({ base: markdownLanguage, codeLanguages: languages })]
-
-  }
-  if (lang === "json") {
-    return [json()]
+}
+const go_ext = new langType([".go"], ["go.mod", "go.sum"], "go", [StreamLanguage.define(go)])
+const cpp_ext = new langType([".c", ".cpp", ".h", ".hpp"], [], "cpp", [cpp()])
+const python_ext = new langType([".py"], [], "python", [python()])
+const js_ext = new langType([".js", ".ts", ".tsx"], [], "js", [javascript({ jsx: true })])
+const css_ext = new langType([".css",], [], "css", [css()])
+const json_ext = new langType([".json"], [], "json", [json()])
+const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()])
+const markdown_ext = new langType([".md"], [], "md", [markdown({ base: markdownLanguage, codeLanguages: languages })])
+function get_lang_type(filePath: string): [any?] {
+  var ss = [go_ext, js_ext, go_ext, json_ext, markdown_ext, python_ext, cpp_ext, css_ext, yaml_ext]
+  for (let index = 0; index < ss.length; index++) {
+    const element = ss[index];
+    let t = element.is(filePath)
+    if (t !== undefined) {
+      return t
+    }
   }
   return []
-}
-function getFileExtension(filePath: string): string {
-  const lastDotIndex = filePath.lastIndexOf('.');
-  if (lastDotIndex === -1) {
-      return ''; // 如果没有找到点，则文件没有扩展名
-  }
-  // var a=parse(filePath)
-  return filePath.substring(lastDotIndex+1); // 返回包括点在内的扩展名
 }
 
 const { Header, Sider, Content } = Layout;
@@ -83,7 +107,8 @@ const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   // const [fileList, setFileList] = useState<FileItem[]>([]);
   const [dir, setDir] = useState(a);
-  const [lang, setLang] = useState("");
+  var default_ext: [any?] = []
+  const [lang, setLang] = useState(default_ext);
   const [imagesrc, setImagesrc] = useState("")
   const [enabldcode, setEnabledCode] = useState(true);
   const [content, setContent] = useState("");
@@ -200,7 +225,7 @@ const App: React.FC = () => {
         return
       }
       setEnabledCode(true)
-      let ext=getFileExtension(root)
+      let ext = get_lang_type(root)
       setLang(ext)
       const response = await axios.get(u, { responseType: 'text' }); // 使用 Axios 发起请
       console.log(response.data)
@@ -266,7 +291,7 @@ const App: React.FC = () => {
             hidden={!enabldcode}
             height='800px'
             theme={monokai}
-            value={content} 
+            value={content}
             extensions={get_lang_extention(lang)} />;
           {/* {content} */}
         </Content>
