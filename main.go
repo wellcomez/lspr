@@ -22,7 +22,7 @@ func get_file_data(r *http.Request) ([]byte, error) {
 	return os.ReadFile(dir)
 }
 func openfile(w http.ResponseWriter, r *http.Request) {
-	data, _:= get_file_data(r)
+	data, _ := get_file_data(r)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// 其他 CORS 相关头
@@ -93,9 +93,9 @@ func newFunction(r *http.Request) (dir, error) {
 		files = append(files, file{
 			Parent:  Parent,
 			Name:    v.Name(),
-			DirName: dir,
+			DirName: strings.TrimPrefix(dir, cur),
 			IsDir:   v.IsDir(),
-			Path:    Path,
+			Path:    strings.TrimPrefix(Path, cur),
 		})
 	}
 	ret.Files = files

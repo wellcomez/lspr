@@ -27,7 +27,7 @@ import axios from 'axios';
 import path from 'path-browserify';
 import FolderTree, { NodeData, testData } from 'react-folder-tree';
 import 'react-folder-tree/dist/style.css';
-const BasicTree = (testData:NodeData) => {
+const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
   const onNameClick = (opts: { defaultOnClick: () => void, nodeData: NodeData }) => {
     opts.defaultOnClick();
 
@@ -39,6 +39,7 @@ const BasicTree = (testData:NodeData) => {
     } = opts.nodeData;
     console.log(path, name, checked, isOpen, whateverRest)
     // download(url);
+    open(opts.nodeData.file)
   };
   const onTreeStateChange = (state: any, event: any) => {
     console.log(state, event);
@@ -78,9 +79,9 @@ function CreateTreeState(dir: Dir): NodeDataFile {
   var f: fileresp = { Path: Path, IsDir: false, Name: dir.rootname, parent: dir.parent, dirname: dir.rootname }
   var ret = new NodeDataFile(dir.rootname, f)
   dir.files.forEach(element => {
-    var a: NodeDataFile = { name: element.Name, file: f }
-    if (ret.children){
-      if(element.IsDir){
+    var a: NodeDataFile = { name: element.Name, file: element }
+    if (ret.children) {
+      if (element.IsDir) {
         a.isOpen = true
       }
       ret.children.push(a)
@@ -238,8 +239,8 @@ const App: React.FC = () => {
   }
 
   const open_file = async (root: string) => {
+    let u = url_open_file + root
     try {
-      let u = url_open_file + root
       if (isPng(u)) {
         setImagesrc(u)
         setEnabledCode(false)
@@ -267,6 +268,13 @@ const App: React.FC = () => {
     } finally {
     }
   };
+  const did_click_node = (node: fileresp) => {
+    if(node.IsDir){
+      open_dir(node.Path)
+    }else{
+      open_file(node.Path)
+    }
+  }
   const url_open_dir = "http://localhost:18080/path"
   const url_open_file = "http://localhost:18080/open"
   useEffect(() => {
@@ -280,7 +288,7 @@ const App: React.FC = () => {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         {/* {new_toggle_tree(createDir, dir, handle_click_file, handle_click_dir)} */}
-        {BasicTree(CreateTreeState(dir))}
+        {BasicTree(CreateTreeState(dir), did_click_node)}
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
