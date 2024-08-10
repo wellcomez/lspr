@@ -25,17 +25,31 @@ import {
 } from 'react-toggle-file-tree';
 import axios from 'axios';
 import path from 'path-browserify';
-import FolderTree, { testData } from 'react-folder-tree';
+import FolderTree, { NodeData, testData } from 'react-folder-tree';
 import 'react-folder-tree/dist/style.css';
 
 const BasicTree = () => {
-  const onTreeStateChange = (state: any, event: any) => console.log(state, event);
+  const onNameClick = (opts: { defaultOnClick: () => void, nodeData: NodeData }) => {
+    opts.defaultOnClick();
 
+    const {
+      // internal data
+      path, name, checked, isOpen,
+      // custom data
+      url, ...whateverRest
+    } = opts.nodeData;
+    console.log(path,name,checked,isOpen,whateverRest)
+    // download(url);
+  };
+  const onTreeStateChange = (state: any, event: any) => {
+    console.log(state, event);
+  }
   return (
     <FolderTree
       data={testData}
       showCheckbox={false}
       onChange={onTreeStateChange}
+      onNameClick={onNameClick}
       readOnly
     />
   );
