@@ -102,7 +102,8 @@ function CreateTreeState(dir: Dir): NodeDataFile {
     let p1 = path.parse(dir.parent)
     var parent_file: fileresp =
       { Path: dir.parent, IsDir: true, Name: "..", parent: p1.dir, dirname: p1.base }
-    var parent: NodeDataFile = { name: parent_file.Name, file: parent_file }
+    var parent: NodeDataFile = { name: parent_file.Name, file: parent_file ,children : []}
+    parent.isOpen=false
     ret.children.push(parent)
 
   }
@@ -110,7 +111,8 @@ function CreateTreeState(dir: Dir): NodeDataFile {
     var a: NodeDataFile = { name: element.Name, file: element }
     if (ret.children) {
       if (element.IsDir) {
-        a.isOpen = true
+        a.children=[]
+        a.isOpen=false
       }
       ret.children.push(a)
     }
