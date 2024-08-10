@@ -78,6 +78,14 @@ function CreateTreeState(dir: Dir): NodeDataFile {
   var Path = path.join(dir.parent, dir.root)
   var f: fileresp = { Path: Path, IsDir: false, Name: dir.rootname, parent: dir.parent, dirname: dir.rootname }
   var ret = new NodeDataFile(dir.rootname, f)
+  if (ret.children) {
+    let p1=path.parse(dir.parent)
+    var parent_file: fileresp =
+      { Path: dir.parent, IsDir: true, Name: "..", parent: p1.dir, dirname: p1.base }
+    var parent: NodeDataFile = { name: parent_file.Name, file: parent_file }
+    ret.children.push(parent)
+
+  }
   dir.files.forEach(element => {
     var a: NodeDataFile = { name: element.Name, file: element }
     if (ret.children) {
@@ -269,9 +277,9 @@ const App: React.FC = () => {
     }
   };
   const did_click_node = (node: fileresp) => {
-    if(node.IsDir){
+    if (node.IsDir) {
       open_dir(node.Path)
-    }else{
+    } else {
       open_file(node.Path)
     }
   }
