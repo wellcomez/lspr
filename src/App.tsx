@@ -27,7 +27,23 @@ import axios from 'axios';
 import path from 'path-browserify';
 import FolderTree, { NodeData, testData } from 'react-folder-tree';
 import 'react-folder-tree/dist/style.css';
+import { FaBitcoin } from "react-icons/fa";
+
 const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
+  const FileIcon = (prop: { onClick: () => void, nodeData: NodeData }) => {
+    const { path, name, checked, isOpen, ...restData } = prop.nodeData;
+
+    // custom event handler
+    const handleClick = () => {
+      // doSthBad({ path, name, checked, isOpen, ...restData });
+
+      prop.onClick();
+    };
+
+
+    // custom Style
+    return <FaBitcoin onClick={handleClick} />;
+  };
   const onNameClick = (opts: { defaultOnClick: () => void, nodeData: NodeData }) => {
     opts.defaultOnClick();
 
@@ -51,6 +67,10 @@ const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
       onChange={onTreeStateChange}
       onNameClick={onNameClick}
       readOnly
+      iconComponents={{
+        FileIcon,
+        /* other custom icons ... */
+      }}
     />
   );
 };
@@ -79,7 +99,7 @@ function CreateTreeState(dir: Dir): NodeDataFile {
   var f: fileresp = { Path: Path, IsDir: false, Name: dir.rootname, parent: dir.parent, dirname: dir.rootname }
   var ret = new NodeDataFile(dir.rootname, f)
   if (ret.children) {
-    let p1=path.parse(dir.parent)
+    let p1 = path.parse(dir.parent)
     var parent_file: fileresp =
       { Path: dir.parent, IsDir: true, Name: "..", parent: p1.dir, dirname: p1.base }
     var parent: NodeDataFile = { name: parent_file.Name, file: parent_file }
