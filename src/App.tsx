@@ -25,7 +25,21 @@ import {
 } from 'react-toggle-file-tree';
 import axios from 'axios';
 import path from 'path-browserify';
+import FolderTree, { testData } from 'react-folder-tree';
+import 'react-folder-tree/dist/style.css';
 
+const BasicTree = () => {
+  const onTreeStateChange = (state: any, event: any) => console.log(state, event);
+
+  return (
+    <FolderTree
+      data={testData}
+      showCheckbox={false}
+      onChange={onTreeStateChange}
+      readOnly
+    />
+  );
+};
 // import parse from 'parse-filepath';
 
 
@@ -116,23 +130,6 @@ const App: React.FC = () => {
   // const [root, setRoot] = useState("/");
   const setData = (data: Dir) => {
     setDir(data);
-    // let aa: FileItem[] = []
-    // setRootName(data.rootname)
-    // setRoot(data.root)
-    // data.files.forEach((f: fileresp) => {
-    //   let a = {
-    //     IsDir: f.IsDir,
-    //     localPath: f.parent,
-    //     fileName: f.Name,
-    //     properties: {
-    //       size: '1 bit',
-    //       anything: 'possible',
-    //       a: 'b',
-    //     },
-    //   }
-    //   aa.push(a)
-    // });
-    // setFileList(aa)
   }
   function createDir(list: Dir): Directory {
     const expectedFileTree: Directory = { files: [] };
@@ -169,24 +166,6 @@ const App: React.FC = () => {
     });
     return expectedFileTree
   }
-  // function createFileTree2(list: FileItem[]): Directory {
-  //   const expectedFileTree: Directory = { files: [] };
-  //   for (const file of list) {
-  //     const filePathParts = file.localPath.split('/').filter(Boolean);
-  //     let current = expectedFileTree;
-  //     for (const part of filePathParts) {
-  //       if (!current[part]) {
-  //         current[part] = { files: [] };
-  //       }
-  //       current = current[part] as Directory;
-  //     }
-  //     if (file.IsDir && filePathParts.length > 1) {
-  //       continue
-  //     }
-  //     current.files.push(file);
-  //   }
-  //   return expectedFileTree;
-  // }
   const handle_click_file = (event: any) => {
     const file = event as unknown as FileItem
     let name = file.fileName
@@ -258,11 +237,8 @@ const App: React.FC = () => {
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
-        <ToggleFileTree
-          list={createDir(dir) as Directory}
-          handleFileClick={handle_click_file}
-          handleDirectoryClick={handle_click_dir}
-        />
+        {/* {new_toggle_tree(createDir, dir, handle_click_file, handle_click_dir)} */}
+        {BasicTree()}
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
@@ -301,3 +277,10 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+function new_toggle_tree(createDir: (list: Dir) => Directory, dir: Dir, handle_click_file: (event: any) => void, handle_click_dir: (event: any) => void) {
+  return <ToggleFileTree
+    list={createDir(dir) as Directory}
+    handleFileClick={handle_click_file}
+    handleDirectoryClick={handle_click_dir} />;
+}
