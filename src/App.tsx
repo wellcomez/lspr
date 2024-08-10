@@ -68,7 +68,7 @@ const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
       onNameClick={onNameClick}
       readOnly
       iconComponents={{
-        // FileIcon,
+        FileIcon,
         /* other custom icons ... */
       }}
     />
@@ -102,17 +102,24 @@ function CreateTreeState(dir: Dir): NodeDataFile {
     let p1 = path.parse(dir.parent)
     var parent_file: fileresp =
       { Path: dir.parent, IsDir: true, Name: "..", parent: p1.dir, dirname: p1.base }
-    var parent: NodeDataFile = { name: parent_file.Name, file: parent_file ,children : []}
-    parent.isOpen=false
+    var parent: NodeDataFile = { name: parent_file.Name, file: parent_file, children: [] }
+    parent.isOpen = false
     ret.children.push(parent)
 
   }
-  dir.files.forEach(element => {
+  var b = dir.files.sort((a, b) => {
+    if (a.IsDir !== b.IsDir && a.IsDir) {
+      return -1
+    }
+    return a.Name.localeCompare(b.Name)
+  }
+  )
+  b.forEach(element => {
     var a: NodeDataFile = { name: element.Name, file: element }
     if (ret.children) {
       if (element.IsDir) {
-        a.children=[]
-        a.isOpen=false
+        a.children = []
+        a.isOpen = false
       }
       ret.children.push(a)
     }
@@ -261,9 +268,9 @@ const App: React.FC = () => {
     open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
-  var imageset=new Set(['.png', '.jpg', '.jpeg', '.gif','.ico'])
+  var imageset = new Set(['.png', '.jpg', '.jpeg', '.gif', '.ico'])
   function isPng(fileName: string): boolean {
-    var ext=path.parse(fileName).ext
+    var ext = path.parse(fileName).ext
     return imageset.has(ext)
   }
 
