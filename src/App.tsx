@@ -27,8 +27,7 @@ import axios from 'axios';
 import path from 'path-browserify';
 import FolderTree, { NodeData, testData } from 'react-folder-tree';
 import 'react-folder-tree/dist/style.css';
-
-const BasicTree = () => {
+const BasicTree = (testData:NodeData) => {
   const onNameClick = (opts: { defaultOnClick: () => void, nodeData: NodeData }) => {
     opts.defaultOnClick();
 
@@ -38,7 +37,7 @@ const BasicTree = () => {
       // custom data
       url, ...whateverRest
     } = opts.nodeData;
-    console.log(path,name,checked,isOpen,whateverRest)
+    console.log(path, name, checked, isOpen, whateverRest)
     // download(url);
   };
   const onTreeStateChange = (state: any, event: any) => {
@@ -60,6 +59,34 @@ const BasicTree = () => {
 // var parsePath = require('parse-filepath');
 const get_lang_extention = (lang: [any?]): [any?] => {
   return lang
+}
+class NodeDataFile implements NodeData {
+  [key: string]: any;
+  checked?: (0 | 1 | 0.5) | undefined;
+  children?: NodeData[] | undefined;
+  isOpen?: boolean | undefined;
+  name: string;
+  file: fileresp;
+  constructor(name: string, file: fileresp) {
+    this.name = name;
+    this.file = file
+    this.children = []
+  }
+}
+function CreateTreeState(dir: Dir): NodeDataFile {
+  var Path = path.join(dir.parent, dir.root)
+  var f: fileresp = { Path: Path, IsDir: false, Name: dir.rootname, parent: dir.parent, dirname: dir.rootname }
+  var ret = new NodeDataFile(dir.rootname, f)
+  dir.files.forEach(element => {
+    var a: NodeDataFile = { name: element.Name, file: f }
+    if (ret.children){
+      if(element.IsDir){
+        a.isOpen = true
+      }
+      ret.children.push(a)
+    }
+  });
+  return ret
 }
 class langType {
   constructor(extset: Array<string>, fileset: Array<string>, type: string, extension: [any]) {
@@ -145,6 +172,7 @@ const App: React.FC = () => {
   const setData = (data: Dir) => {
     setDir(data);
   }
+
   function createDir(list: Dir): Directory {
     const expectedFileTree: Directory = { files: [] };
     const root: Directory = { files: [] };
@@ -183,7 +211,7 @@ const App: React.FC = () => {
   const handle_click_file = (event: any) => {
     const file = event as unknown as FileItem
     let name = file.fileName
-    if (name == "..") {
+    if (name === "..") {
       open_dir(dir.parent)
     } else {
       if (dir.root.length == 1) {
@@ -252,7 +280,7 @@ const App: React.FC = () => {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{ backgroundColor: '#FFFFFF', width: 400 }}>
         {/* {new_toggle_tree(createDir, dir, handle_click_file, handle_click_dir)} */}
-        {BasicTree()}
+        {BasicTree(CreateTreeState(dir))}
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
