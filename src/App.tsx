@@ -68,7 +68,7 @@ const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
       onNameClick={onNameClick}
       readOnly
       iconComponents={{
-        FileIcon,
+        // FileIcon,
         /* other custom icons ... */
       }}
     />
@@ -259,11 +259,10 @@ const App: React.FC = () => {
     open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
+  var imageset=new Set(['.png', '.jpg', '.jpeg', '.gif','.ico'])
   function isPng(fileName: string): boolean {
-    // 使用正则表达式匹配文件名中的扩展名部分
-    const fileExtension = fileName.match(/\.(\w+)$/);
-    // 检查是否有匹配结果并且扩展名是否为 "png"
-    return fileExtension ? fileExtension[1].toLowerCase() === 'png' : false;
+    var ext=path.parse(fileName).ext
+    return imageset.has(ext)
   }
 
   const open_file = async (root: string) => {

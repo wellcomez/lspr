@@ -70,7 +70,7 @@ func newFunction(r *http.Request) (dir, error) {
 		Root:     ss,
 		RootName: filepath.Base(ss),
 		Files:    []file{},
-		Parent:   filepath.Dir(filepath.Dir(ss)),
+		Parent:   filepath.Dir(ss),
 	}
 	cur, err := os.Getwd()
 	if err != nil {
