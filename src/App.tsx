@@ -46,14 +46,10 @@ import { BiLogoTypescript } from "react-icons/bi";
 import { SiGoland } from "react-icons/si";
 import { SiMarkdown } from "react-icons/si";
 import { SiTypescript } from "react-icons/si";
+import { IconType } from 'react-icons/lib/cjs/iconBase';
+import { DiPython } from "react-icons/di";
+import { SiYaml } from "react-icons/si";
 
-function MySvgIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-    </svg>
-  );
-}
 var imageset = new Set(['.png', '.jpg', '.jpeg', '.gif', '.ico'])
 const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
   const FileIcon = (prop: { onClick: () => void, nodeData: NodeData }) => {
@@ -77,29 +73,14 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
     if (ext === ".png") {
       return <PiFilePngFill onClick={handleClick} />
     }
-    if (imageset.has(ext)) {
-      <FaRegImage onClick={handleClick} />
-    }
-    if (markdown_ext.is(name)) {
-      return <SiMarkdown onClick={handleClick} />
-    }
-    if (git_ext.is(name)) {
-      return <FaGit onClick={handleClick} />
-    }
-    if (js_ext.is(name)) {
-      return <DiJavascript1 onClick={handleClick} />
-    }
-    if (go_ext.is(name)) {
-      return <SiGoland onClick={handleClick} />
-    }
-    if (cpp_ext.is(name)) {
-      return <TbBrandCpp onClick={handleClick} />
-    }
-    if (json_ext.is(name)) {
-      return <TbJson onClick={handleClick} />
-    }
-    if (css_ext.is(name)) {
-      return <PiFileCssFill onClick={handleClick} />
+    for (let i = 0; i <all_language.length;i++){
+      if (all_language[i].is(name))
+      {
+        let tag = all_language[i].icon
+        let prop={onClick:handleClick}
+        return tag(prop)
+        // return <tag onClick={handleClick} />;
+      }
     }
     // return <MySvgIcon/>
     // custom Style
@@ -188,12 +169,14 @@ function CreateTreeState(dir: Dir): NodeDataFile {
   return ret
 }
 class langType {
-  constructor(extset: Array<string>, fileset: Array<string>, type: string, extension: [any?]) {
+  constructor(extset: Array<string>, fileset: Array<string>, type: string, extension: [any?],icon :IconType) {
     this.extset = new Set(extset)
     this.fileset = new Set(fileset)
     this.type = type
     this.extension = extension
+    this.icon = icon
   }
+  icon :IconType
   extset: Set<string> = new Set()
   fileset: Set<string> = new Set()
   extension: [any?]
@@ -209,19 +192,19 @@ class langType {
     return undefined
   }
 }
-const go_ext = new langType([".go"], ["go.mod", "go.sum"], "go", [StreamLanguage.define(go)])
-const cpp_ext = new langType([".c", ".cpp", ".h", ".hpp"], [], "cpp", [cpp()])
-const python_ext = new langType([".py"], [], "python", [python()])
-const js_ext = new langType([".js", ".ts", ".tsx"], [], "js", [javascript({ jsx: true })])
-const css_ext = new langType([".css",], [], "css", [css()])
-const json_ext = new langType([".json"], [], "json", [json()])
-const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()])
-const git_ext = new langType([".ignore"], [".gitignore"], "git", [])
-const markdown_ext = new langType([".md"], [], "md", [markdown({ base: markdownLanguage, codeLanguages: languages })])
-var ss = [go_ext, js_ext, go_ext, json_ext, markdown_ext, python_ext, cpp_ext, css_ext, yaml_ext]
+const go_ext = new langType([".go"], ["go.mod", "go.sum"], "go", [StreamLanguage.define(go)],SiGoland)
+const cpp_ext = new langType([".c", ".cpp", ".h", ".hpp"], [], "cpp", [cpp()],TbBrandCpp)
+const python_ext = new langType([".py"], [], "python", [python()],DiPython)
+const js_ext = new langType([".js", ".ts", ".tsx"], [], "js", [javascript({ jsx: true })],DiJavascript1)
+const css_ext = new langType([".css",], [], "css", [css()],PiFileCssFill)
+const json_ext = new langType([".json"], [], "json", [json()],TbJson)
+const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()],SiYaml)
+const git_ext = new langType([".ignore"], [".gitignore"], "git", [],FaGit)
+const markdown_ext = new langType([".md"], [], "md", [markdown({ base: markdownLanguage, codeLanguages: languages })],SiMarkdown)
+var all_language = [go_ext, js_ext, go_ext, json_ext, markdown_ext, python_ext, cpp_ext, css_ext, yaml_ext,git_ext]
 function get_lang_type(filePath: string): [any?] {
-  for (let index = 0; index < ss.length; index++) {
-    const element = ss[index];
+  for (let index = 0; index < all_language.length; index++) {
+    const element = all_language[index];
     let t = element.is(filePath)
     if (t !== undefined) {
       return t
