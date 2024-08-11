@@ -27,11 +27,36 @@ import axios from 'axios';
 import path from 'path-browserify';
 import FolderTree, { NodeData, testData } from 'react-folder-tree';
 import 'react-folder-tree/dist/style.css';
-import { FaBitcoin } from "react-icons/fa";
+import { FaBitcoin, FaFileCode } from "react-icons/fa";
+import { FaRegImage } from "react-icons/fa6";
+import { RiJavascriptLine } from "react-icons/ri";
+import { DiJavascript1 } from "react-icons/di";
+import { TbFileTypeCss } from "react-icons/tb";
+import { MdCss } from "react-icons/md";
+import { FaGolang } from "react-icons/fa6";
+import { TbJson } from "react-icons/tb";
+import { TbBrandGolang } from "react-icons/tb";
+import { TbBrandTypescript } from "react-icons/tb";
+import { FaGit } from "react-icons/fa";
+import { TbBrandCpp } from "react-icons/tb";
+import { SiTypescript } from "react-icons/si";
+import { SiMarkdown } from "react-icons/si";
+import { PiFilePngFill } from "react-icons/pi";
+import { MdHtml } from "react-icons/md";
+import { PiFileCssFill } from "react-icons/pi";
+import { BiLogoTypescript } from "react-icons/bi";
 
-const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
+function MySvgIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+    </svg>
+  );
+}
+var imageset = new Set(['.png', '.jpg', '.jpeg', '.gif', '.ico'])
+const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
   const FileIcon = (prop: { onClick: () => void, nodeData: NodeData }) => {
-    const { path, name, checked, isOpen, ...restData } = prop.nodeData;
+    // const { path, name, checked, isOpen, ...restData } = prop.nodeData;
 
     // custom event handler
     const handleClick = () => {
@@ -39,10 +64,45 @@ const BasicTree = (testData: NodeData, open: (file: fileresp) => void) => {
 
       prop.onClick();
     };
-
-
+    let name = prop.nodeData.name;
+    // console.log(prop.nodeData)
+    var ext = path.parse(name).ext
+    if (ext === ".ts" || ext === ".tsx") {
+      return <BiLogoTypescript onClick={handleClick} />
+    }
+    if (ext === ".html") {
+      return <MdHtml onClick={handleClick} />
+    }
+    if (ext === ".png") {
+      return <PiFilePngFill onClick={handleClick} />
+    }
+    if (imageset.has(ext)) {
+      <FaRegImage onClick={handleClick} />
+    }
+    if (markdown_ext.is(name)) {
+      return <SiMarkdown onClick={handleClick} />
+    }
+    if (git_ext.is(name)) {
+      return <FaGit onClick={handleClick} />
+    }
+    if (js_ext.is(name)) {
+      return <DiJavascript1 onClick={handleClick} />
+    }
+    if (go_ext.is(name)) {
+      return <TbBrandGolang onClick={handleClick} />
+    }
+    if (cpp_ext.is(name)) {
+      return <TbBrandCpp onClick={handleClick} />
+    }
+    if (json_ext.is(name)) {
+      return <TbJson onClick={handleClick} />
+    }
+    if (css_ext.is(name)) {
+      return <PiFileCssFill onClick={handleClick} />
+    }
+    // return <MySvgIcon/>
     // custom Style
-    return <FaBitcoin onClick={handleClick} />;
+    return <FaFileCode onClick={handleClick} />;
   };
   const onNameClick = (opts: { defaultOnClick: () => void, nodeData: NodeData }) => {
     opts.defaultOnClick();
@@ -127,7 +187,7 @@ function CreateTreeState(dir: Dir): NodeDataFile {
   return ret
 }
 class langType {
-  constructor(extset: Array<string>, fileset: Array<string>, type: string, extension: [any]) {
+  constructor(extset: Array<string>, fileset: Array<string>, type: string, extension: [any?]) {
     this.extset = new Set(extset)
     this.fileset = new Set(fileset)
     this.type = type
@@ -135,9 +195,9 @@ class langType {
   }
   extset: Set<string> = new Set()
   fileset: Set<string> = new Set()
-  extension: [any]
+  extension: [any?]
   type: string
-  is(filePath: string): [any] | undefined {
+  is(filePath: string): [any?] | undefined {
     const { base, ext } = path.parse(filePath)
     if (this.fileset.has(base)) {
       return this.extension
@@ -155,9 +215,10 @@ const js_ext = new langType([".js", ".ts", ".tsx"], [], "js", [javascript({ jsx:
 const css_ext = new langType([".css",], [], "css", [css()])
 const json_ext = new langType([".json"], [], "json", [json()])
 const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()])
+const git_ext = new langType([".ignore"], [".gitignore"], "git", [])
 const markdown_ext = new langType([".md"], [], "md", [markdown({ base: markdownLanguage, codeLanguages: languages })])
+var ss = [go_ext, js_ext, go_ext, json_ext, markdown_ext, python_ext, cpp_ext, css_ext, yaml_ext]
 function get_lang_type(filePath: string): [any?] {
-  var ss = [go_ext, js_ext, go_ext, json_ext, markdown_ext, python_ext, cpp_ext, css_ext, yaml_ext]
   for (let index = 0; index < ss.length; index++) {
     const element = ss[index];
     let t = element.is(filePath)
@@ -268,7 +329,6 @@ const App: React.FC = () => {
     open_dir(dir.root + key)
     console.log('Clicked on paragraph:', event);
   }
-  var imageset = new Set(['.png', '.jpg', '.jpeg', '.gif', '.ico'])
   function isPng(fileName: string): boolean {
     var ext = path.parse(fileName).ext
     return imageset.has(ext)
