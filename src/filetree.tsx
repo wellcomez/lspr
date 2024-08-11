@@ -5,8 +5,8 @@ import path from 'path-browserify';
 import { all_language } from "./langType";
 import { FaFileCode } from "react-icons/fa6";
 import { FaRegFolderClosed } from "react-icons/fa6";
-
-import FolderTree, { NodeData, testData } from "react-folder-tree";
+import "./filetree.css"
+import FolderTree, { NodeData } from "react-folder-tree";
 export type fileresp = {
     Path: string;
     IsDir: boolean;
@@ -58,7 +58,7 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
         for (let i = 0; i < all_language.length; i++) {
             if (all_language[i].is(name)) {
                 let tag = all_language[i].icon;
-                let prop = { onClick: handleClick };
+                let prop = { onClick: handleClick ,className:all_language[i].type};
                 return tag(prop);
                 // return <tag onClick={handleClick} />;
             }

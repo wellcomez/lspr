@@ -13,7 +13,7 @@ import { monokai } from "@uiw/codemirror-theme-monokai";
 import { Directory, ToggleFileTree } from "react-toggle-file-tree";
 import axios from "axios";
 import path from "path-browserify";
-import "react-folder-tree/dist/style.css";
+// import "./style.css";
 import { all_language } from "./langType";
 import { Dir, fileresp, BasicTree ,CreateTreeState} from "./filetree";
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
@@ -54,7 +54,42 @@ const App: React.FC = () => {
     setDir(data);
   };
 
-    // const handle_click_file = (event: any) => {
+  function createDir(list: Dir): Directory {
+    const expectedFileTree: Directory = { files: [] };
+    const root: Directory = { files: [] };
+    let a = {
+      localPath: "..",
+      fileName: "..",
+      properties: {
+        size: "1 bit",
+        anything: "possible",
+        a: "b",
+      },
+    };
+    root.files.push(a);
+    // root[".."] = { files: [] }
+
+    expectedFileTree[list.rootname] = root;
+    dir.files.forEach((f) => {
+      if (f.IsDir) {
+        root[f.Name] = { files: [] };
+      } else {
+        let a = {
+          IsDir: f.IsDir,
+          localPath: f.parent,
+          fileName: f.Name,
+          properties: {
+            size: "1 bit",
+            anything: "possible",
+            a: "b",
+          },
+        };
+        root.files.push(a);
+      }
+    });
+    return expectedFileTree;
+  }
+  // const handle_click_file = (event: any) => {
   //   const file = event as unknown as FileItem;
   //   let name = file.fileName;
   //   if (name === "..") {
