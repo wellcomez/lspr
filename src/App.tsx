@@ -15,7 +15,7 @@ import axios from "axios";
 import path from "path-browserify";
 import "react-folder-tree/dist/style.css";
 import { all_language } from "./langType";
-import { Dir, fileresp, NodeDataFile, BasicTree ,CreateTreeState} from "./filetree";
+import { Dir, fileresp, BasicTree ,CreateTreeState} from "./filetree";
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 // var parsePath = require('parse-filepath');
 const get_lang_extention = (lang: [any?]): [any?] => {
@@ -36,16 +36,7 @@ function get_lang_type(filePath: string): [any?] {
 
 const { Header, Sider, Content } = Layout;
 
-type FileItem = {
-  localPath: string;
-  fileName: string;
-  IsDir: boolean;
-  properties: {
-    size: string;
-    anything: string;
-    a: string;
-  };
-};
+
 
 const App: React.FC = () => {
   var a: Dir = { root: "/", rootname: "", files: [], parent: "" };
@@ -98,28 +89,28 @@ const App: React.FC = () => {
     });
     return expectedFileTree;
   }
-  const handle_click_file = (event: any) => {
-    const file = event as unknown as FileItem;
-    let name = file.fileName;
-    if (name === "..") {
-      open_dir(dir.parent);
-    } else {
-      if (dir.root.length == 1) {
-        open_file("/" + name);
-      } else {
-        var path = [dir.root, name].join("/");
-        open_file(path);
-      }
-    }
-  };
-  const handle_click_dir = (event: any) => {
-    const { key } = event as unknown as Directory;
-    if ((key as unknown as string) == dir.rootname) {
-      return;
-    }
-    open_dir(dir.root + key);
-    console.log("Clicked on paragraph:", event);
-  };
+  // const handle_click_file = (event: any) => {
+  //   const file = event as unknown as FileItem;
+  //   let name = file.fileName;
+  //   if (name === "..") {
+  //     open_dir(dir.parent);
+  //   } else {
+  //     if (dir.root.length == 1) {
+  //       open_file("/" + name);
+  //     } else {
+  //       var path = [dir.root, name].join("/");
+  //       open_file(path);
+  //     }
+  //   }
+  // };
+  // const handle_click_dir = (event: any) => {
+  //   const { key } = event as unknown as Directory;
+  //   if ((key as unknown as string) == dir.rootname) {
+  //     return;
+  //   }
+  //   open_dir(dir.root + key);
+  //   console.log("Clicked on paragraph:", event);
+  // };
   function isPng(fileName: string): boolean {
     var ext = path.parse(fileName).ext;
     return imageset.has(ext);
@@ -223,17 +214,4 @@ const App: React.FC = () => {
 
 export default App;
 
-function new_toggle_tree(
-  createDir: (list: Dir) => Directory,
-  dir: Dir,
-  handle_click_file: (event: any) => void,
-  handle_click_dir: (event: any) => void,
-) {
-  return (
-    <ToggleFileTree
-      list={createDir(dir) as Directory}
-      handleFileClick={handle_click_file}
-      handleDirectoryClick={handle_click_dir}
-    />
-  );
-}
+
