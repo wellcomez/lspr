@@ -54,42 +54,7 @@ const App: React.FC = () => {
     setDir(data);
   };
 
-  function createDir(list: Dir): Directory {
-    const expectedFileTree: Directory = { files: [] };
-    const root: Directory = { files: [] };
-    let a = {
-      localPath: "..",
-      fileName: "..",
-      properties: {
-        size: "1 bit",
-        anything: "possible",
-        a: "b",
-      },
-    };
-    root.files.push(a);
-    // root[".."] = { files: [] }
-
-    expectedFileTree[list.rootname] = root;
-    dir.files.forEach((f) => {
-      if (f.IsDir) {
-        root[f.Name] = { files: [] };
-      } else {
-        let a = {
-          IsDir: f.IsDir,
-          localPath: f.parent,
-          fileName: f.Name,
-          properties: {
-            size: "1 bit",
-            anything: "possible",
-            a: "b",
-          },
-        };
-        root.files.push(a);
-      }
-    });
-    return expectedFileTree;
-  }
-  // const handle_click_file = (event: any) => {
+    // const handle_click_file = (event: any) => {
   //   const file = event as unknown as FileItem;
   //   let name = file.fileName;
   //   if (name === "..") {
