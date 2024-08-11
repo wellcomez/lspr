@@ -4,6 +4,8 @@ import { PiFilePngFill } from "react-icons/pi";
 import path from 'path-browserify';
 import { all_language } from "./langType";
 import { FaFileCode } from "react-icons/fa6";
+import { FaRegFolderClosed } from "react-icons/fa6";
+
 import FolderTree, { NodeData, testData } from "react-folder-tree";
 export type fileresp = {
     Path: string;
@@ -88,6 +90,8 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
     const onTreeStateChange = (state: any, event: any) => {
         console.log(state, event);
     };
+    let FolderOpenIcon = FaRegFolderClosed
+    let FolderIcon = FaRegFolderClosed
     return (
         <FolderTree
             data={testData}
@@ -95,8 +99,11 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
             onChange={onTreeStateChange}
             onNameClick={onNameClick}
             readOnly
+            initOpenStatus={"custom"}
             iconComponents={{
                 FileIcon,
+                FolderIcon,
+                FolderOpenIcon,
                 /* other custom icons ... */
             }}
         />
@@ -111,7 +118,9 @@ export function CreateTreeState(dir: Dir): NodeDataFile {
         parent: dir.parent,
         dirname: dir.rootname,
     };
-    var ret = new NodeDataFile(dir.rootname, f);
+    let ret = new NodeDataFile(dir.rootname, f);
+    ret.isOpen = true;
+    let isOpen = false;
     if (ret.children) {
         let p1 = path.parse(dir.parent);
         var parent_file: fileresp = {
@@ -124,9 +133,9 @@ export function CreateTreeState(dir: Dir): NodeDataFile {
         var parent: NodeDataFile = {
             name: parent_file.Name,
             file: parent_file,
+            isOpen: isOpen,
             children: [],
         };
-        parent.isOpen = false;
         ret.children.push(parent);
     }
     var b = dir.files.sort((a, b) => {
@@ -142,11 +151,10 @@ export function CreateTreeState(dir: Dir): NodeDataFile {
         return a.Name.localeCompare(b.Name);
     });
     b.forEach((element) => {
-        var a: NodeDataFile = { name: element.Name, file: element };
+        var a: NodeDataFile = { name: element.Name, file: element, isOpen: isOpen };
         if (ret.children) {
             if (element.IsDir) {
                 a.children = [];
-                a.isOpen = false;
             }
             ret.children.push(a);
         }
