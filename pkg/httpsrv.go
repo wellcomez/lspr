@@ -20,6 +20,22 @@ func get_file_data(r *http.Request) ([]byte, error) {
 	dir := filepath.Join(cur, ss)
 	return os.ReadFile(dir)
 }
+func Index(w http.ResponseWriter, r *http.Request) {
+	pwd,err:=os.Getwd()
+	if err!=nil{
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	file:=filepath.Join(pwd,"build","index.html")
+	data, _ := os.ReadFile(file)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// 其他 CORS 相关头
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	w.Write(data)
+
+}
 func openfile(w http.ResponseWriter, r *http.Request) {
 	data, _ := get_file_data(r)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -112,6 +128,7 @@ func newFunction(r *http.Request) (dir, error) {
 
 func NewRouter() *mux.Router {
 	r := mux.NewRouter()
+	r.HandleFunc("/", Index).Methods("GET")
 	r.HandleFunc("/path/{path:.*}", helloWorld).Methods("GET")
 	r.HandleFunc("/open/{path:.*}", openfile).Methods("GET")
 	return r
