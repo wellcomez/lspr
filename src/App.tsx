@@ -39,6 +39,13 @@ const { Header, Sider, Content } = Layout;
 
 
 const App: React.FC = () => {
+  return NewFunction();
+};
+
+export default App;
+
+
+function NewFunction() {
   var a: Dir = { root: "/", rootname: "", files: [], parent: "" };
   const [collapsed, setCollapsed] = useState(false);
   // const [fileList, setFileList] = useState<FileItem[]>([]);
@@ -54,63 +61,6 @@ const App: React.FC = () => {
     setDir(data);
   };
 
-  function createDir(list: Dir): Directory {
-    const expectedFileTree: Directory = { files: [] };
-    const root: Directory = { files: [] };
-    let a = {
-      localPath: "..",
-      fileName: "..",
-      properties: {
-        size: "1 bit",
-        anything: "possible",
-        a: "b",
-      },
-    };
-    root.files.push(a);
-    // root[".."] = { files: [] }
-
-    expectedFileTree[list.rootname] = root;
-    dir.files.forEach((f) => {
-      if (f.IsDir) {
-        root[f.Name] = { files: [] };
-      } else {
-        let a = {
-          IsDir: f.IsDir,
-          localPath: f.parent,
-          fileName: f.Name,
-          properties: {
-            size: "1 bit",
-            anything: "possible",
-            a: "b",
-          },
-        };
-        root.files.push(a);
-      }
-    });
-    return expectedFileTree;
-  }
-  // const handle_click_file = (event: any) => {
-  //   const file = event as unknown as FileItem;
-  //   let name = file.fileName;
-  //   if (name === "..") {
-  //     open_dir(dir.parent);
-  //   } else {
-  //     if (dir.root.length == 1) {
-  //       open_file("/" + name);
-  //     } else {
-  //       var path = [dir.root, name].join("/");
-  //       open_file(path);
-  //     }
-  //   }
-  // };
-  // const handle_click_dir = (event: any) => {
-  //   const { key } = event as unknown as Directory;
-  //   if ((key as unknown as string) == dir.rootname) {
-  //     return;
-  //   }
-  //   open_dir(dir.root + key);
-  //   console.log("Clicked on paragraph:", event);
-  // };
   function isPng(fileName: string): boolean {
     var ext = path.parse(fileName).ext;
     return imageset.has(ext);
@@ -139,6 +89,7 @@ const App: React.FC = () => {
     try {
       let u = url_open_dir + root;
       const response = await axios.get(u); // 使用 Axios 发起请求
+
       // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
       setData(response.data);
     } catch (error) {
@@ -183,8 +134,7 @@ const App: React.FC = () => {
               fontSize: "16px",
               width: 64,
               height: 64,
-            }}
-          />
+            }} />
         </Header>
         <Content
           style={{
@@ -203,15 +153,11 @@ const App: React.FC = () => {
             height="800px"
             theme={monokai}
             value={content}
-            extensions={get_lang_extention(lang)}
-          />
+            extensions={get_lang_extention(lang)} />
           ;{/* {content} */}
         </Content>
       </Layout>
     </Layout>
   );
-};
-
-export default App;
-
+}
 
