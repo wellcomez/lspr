@@ -29,22 +29,23 @@ import FolderTree, { NodeData, testData } from 'react-folder-tree';
 import 'react-folder-tree/dist/style.css';
 import { FaBitcoin, FaFileCode } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
+import { FaGit } from "react-icons/fa";
+import { FaGolang } from "react-icons/fa6";
 import { RiJavascriptLine } from "react-icons/ri";
 import { DiJavascript1 } from "react-icons/di";
-import { TbFileTypeCss } from "react-icons/tb";
 import { MdCss } from "react-icons/md";
-import { FaGolang } from "react-icons/fa6";
 import { TbJson } from "react-icons/tb";
 import { TbBrandGolang } from "react-icons/tb";
 import { TbBrandTypescript } from "react-icons/tb";
-import { FaGit } from "react-icons/fa";
+import { TbFileTypeCss } from "react-icons/tb";
 import { TbBrandCpp } from "react-icons/tb";
-import { SiTypescript } from "react-icons/si";
-import { SiMarkdown } from "react-icons/si";
 import { PiFilePngFill } from "react-icons/pi";
 import { MdHtml } from "react-icons/md";
 import { PiFileCssFill } from "react-icons/pi";
 import { BiLogoTypescript } from "react-icons/bi";
+import { SiGoland } from "react-icons/si";
+import { SiMarkdown } from "react-icons/si";
+import { SiTypescript } from "react-icons/si";
 
 function MySvgIcon() {
   return (
@@ -89,7 +90,7 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
       return <DiJavascript1 onClick={handleClick} />
     }
     if (go_ext.is(name)) {
-      return <TbBrandGolang onClick={handleClick} />
+      return <SiGoland onClick={handleClick} />
     }
     if (cpp_ext.is(name)) {
       return <TbBrandCpp onClick={handleClick} />
