@@ -47,7 +47,7 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
         // console.log(prop.nodeData)
         var ext = path.parse(name).ext;
         if (ext === ".ts" || ext === ".tsx") {
-            return <BiLogoTypescript onClick={handleClick} />;
+            return <BiLogoTypescript onClick={handleClick} className="ts" />;
         }
         if (ext === ".html") {
             return <MdHtml onClick={handleClick} />;

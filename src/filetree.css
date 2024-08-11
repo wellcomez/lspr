@@ -1,3 +1,15 @@
 svg.go{
     color:green
 }
+svg.js{
+    color:orange
+}
+svg.ts{
+    color:rgb(34, 102, 238)
+}
+svg.css{
+    color:rgb(204, 20, 20)
+}
+.iconContainer  svg{
+    padding-right: 2px;
+}
