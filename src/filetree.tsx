@@ -50,7 +50,7 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
             return <BiLogoTypescript onClick={handleClick} className="ts" />;
         }
         if (ext === ".html") {
-            return <MdHtml onClick={handleClick} />;
+            return <MdHtml onClick={handleClick} className="html"/>;
         }
         if (ext === ".png") {
             return <PiFilePngFill onClick={handleClick} />;

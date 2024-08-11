@@ -28,7 +28,10 @@ import { cpp } from "@codemirror/lang-cpp";
 import { css } from "@codemirror/lang-css";
 import { python } from "@codemirror/lang-python";
 import { yaml } from "@codemirror/lang-yaml";
+import { html } from "@codemirror/lang-html";
 import { languages } from "@codemirror/language-data";
+import { IoLogoCss3 } from "react-icons/io5";
+import { FaHtml5 } from "react-icons/fa6";
 
 class langType {
   constructor(
@@ -82,10 +85,11 @@ const js_ext = new langType(
   [javascript({ jsx: true })],
   DiJavascript1,
 );
-const css_ext = new langType([".css"], [], "css", [css()], PiFileCssFill);
+const css_ext = new langType([".css"], [], "css", [css()], IoLogoCss3);
 const json_ext = new langType([".json"], [], "json", [json()], TbJson);
 const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()], SiYaml);
-const git_ext = new langType([".ignore"], [".gitignore"], "git", [], FaGit);
+const git_ext = new langType([".git"], [".gitignore"], "git", [], FaGit);
+const html_ext = new langType([".html"], [], "html", [], FaHtml5);
 const markdown_ext = new langType(
   [".md"],
   [],
@@ -104,5 +108,6 @@ var all_language = [
   css_ext,
   yaml_ext,
   git_ext,
+  html_ext
 ];
 export { all_language };

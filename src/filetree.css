@@ -7,9 +7,18 @@ svg.js{
 svg.ts{
     color:rgb(34, 102, 238)
 }
+svg.json{
+    color:rgb(204, 20, 20)
+}
 svg.css{
     color:rgb(204, 20, 20)
 }
+svg.html{
+    color:rgb(127, 204, 20)
+}
 .iconContainer  svg{
     padding-right: 2px;
+}
+svg.icon.CaretDownIcon{
+    display:none;
 }
