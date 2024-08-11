@@ -7,6 +7,7 @@ import { FaFileCode } from "react-icons/fa6";
 import { FaRegFolderClosed } from "react-icons/fa6";
 import "./filetree.css"
 import FolderTree, { NodeData } from "react-folder-tree";
+import { Aarch64Plain, GolandPlain, CplusplusPlain ,Html5Plain} from "devicons-react";
 export type fileresp = {
     Path: string;
     IsDir: boolean;
@@ -50,16 +51,28 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
             return <BiLogoTypescript onClick={handleClick} className="ts" />;
         }
         if (ext === ".html") {
-            return <MdHtml onClick={handleClick} className="html"/>;
+            return <MdHtml onClick={handleClick} className="html" />;
         }
         if (ext === ".png") {
             return <PiFilePngFill onClick={handleClick} />;
         }
         for (let i = 0; i < all_language.length; i++) {
-            if (all_language[i].is(name)) {
-                let tag = all_language[i].icon;
-                let prop = { onClick: handleClick ,className:all_language[i].type};
-                return tag(prop);
+            const lan = all_language[i];
+            if (lan.is(name)) {
+                let { icon, devicon } = all_language[i];
+                if (devicon) {
+                    switch (lan.type) {
+                        case "cpp":
+                            return <CplusplusPlain></CplusplusPlain>
+                        case "go":
+                            return <GolandPlain></GolandPlain>
+                        case "html":
+                            return <Html5Plain></Html5Plain>
+                    }
+                } else {
+                    let prop = { onClick: handleClick, className: all_language[i].type };
+                    return icon(prop);
+                }
                 // return <tag onClick={handleClick} />;
             }
         }

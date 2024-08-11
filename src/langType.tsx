@@ -32,6 +32,7 @@ import { html } from "@codemirror/lang-html";
 import { languages } from "@codemirror/language-data";
 import { IoLogoCss3 } from "react-icons/io5";
 import { FaHtml5 } from "react-icons/fa6";
+import { Aarch64Plain, GoOriginal, GoLine, GolandPlain } from 'devicons-react'
 
 class langType {
   constructor(
@@ -47,6 +48,8 @@ class langType {
     this.extension = extension;
     this.icon = icon;
   }
+
+  devicon: boolean = false
   icon: IconType;
   extset: Set<string> = new Set();
   fileset: Set<string> = new Set();
@@ -70,6 +73,7 @@ const go_ext = new langType(
   [StreamLanguage.define(go)],
   SiGoland,
 );
+go_ext.devicon = true
 const cpp_ext = new langType(
   [".c", ".cpp", ".h", ".hpp"],
   [],
@@ -89,7 +93,8 @@ const css_ext = new langType([".css"], [], "css", [css()], IoLogoCss3);
 const json_ext = new langType([".json"], [], "json", [json()], TbJson);
 const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()], SiYaml);
 const git_ext = new langType([".git"], [".gitignore"], "git", [], FaGit);
-const html_ext = new langType([".html"], [], "html", [], FaHtml5);
+const html_ext = new langType([".html"], [], "html", [html()], FaHtml5);
+html_ext.devicon = true;
 const markdown_ext = new langType(
   [".md"],
   [],
