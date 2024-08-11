@@ -15,7 +15,10 @@ import axios from "axios";
 import path from "path-browserify";
 // import "./style.css";
 import { all_language } from "./langType";
-import { Dir, fileresp, BasicTree ,CreateTreeState} from "./filetree";
+import { Dir, fileresp, BasicTree, CreateTreeState } from "./filetree";
+import { IoMdArrowRoundBack, IoMdArrowRoundForward } from "react-icons/io";
+import ButtonGroup from "antd/es/button/button-group";
+
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 // var parsePath = require('parse-filepath');
 const get_lang_extention = (lang: [any?]): [any?] => {
@@ -135,6 +138,16 @@ function NewFunction() {
               width: 64,
               height: 64,
             }} />
+          <Content hidden={enabldcode}>
+            <ButtonGroup >
+              <Button icon={<IoMdArrowRoundBack />} onClick={() => {
+                get_prev_image();
+              }} />
+              <Button icon={<IoMdArrowRoundForward />} onClick={() => {
+                get_next_image();
+              }} />
+            </ButtonGroup>
+          </Content>
         </Header>
         <Content
           style={{
@@ -146,7 +159,9 @@ function NewFunction() {
           }}
         >
           <Content hidden={enabldcode}>
-            <img src={imagesrc}></img>
+            <div>
+              <img src={imagesrc}></img>
+            </div>
           </Content>
           <CodeMirror
             hidden={!enabldcode}
@@ -154,10 +169,47 @@ function NewFunction() {
             theme={monokai}
             value={content}
             extensions={get_lang_extention(lang)} />
-          ;{/* {content} */}
         </Content>
+
+
       </Layout>
     </Layout>
   );
+
+  function get_next_image() {
+    let index = current_image_index();
+    if (index == -1) return
+    let j = (index + 1 + dir.files.length) % dir.files.length;
+    for (let i = 0; i < dir.files.length; i++) {
+      let file = dir.files[j];
+      if (isPng(file.Name)) {
+        open_file(file.Path);
+        break;
+      }
+      j = (j + 1 + dir.files.length) % dir.files.length;
+    }
+  }
+
+  function get_prev_image() {
+    let index = current_image_index();
+    if (index == -1) return
+    let j = (index - 1 + dir.files.length) % dir.files.length;
+    for (let i = 0; i < dir.files.length; i++) {
+      let file = dir.files[j];
+      if (isPng(file.Name)) {
+        open_file(file.Path);
+        break;
+      }
+      j = (j - 1 + dir.files.length) % dir.files.length;
+    }
+    console.log(index);
+  }
+
+  function current_image_index() {
+    return dir.files.findIndex((file) => {
+      let { name, ext } = path.parse(imagesrc)
+      return name + ext === file.Name;
+    });
+  }
 }
 
