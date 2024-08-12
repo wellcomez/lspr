@@ -13,8 +13,12 @@ func main() {
 	flag.Parse()
 	r := httpsrv.NewRouter(*root)
 	// http.HandleFunc("/path", helloWorld) // 注册路由处理函数
-	fmt.Println("Server listening on :18080")
-	if err := http.ListenAndServe(":18080", r); err != nil {
-		panic(err)
+	for i := 18080; i < 30000; i++ {
+		fmt.Printf("Server listening on http://localhost:%d\n", i)
+		if err := http.ListenAndServe(fmt.Sprintf(":%d", i), r); err != nil {
+			fmt.Println(i, "Inused")
+		} else {
+		}
+
 	}
 }
