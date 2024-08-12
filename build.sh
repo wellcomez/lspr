@@ -9,6 +9,7 @@ while getopts "w" opt; do
 done
 
 if [[ $build_web == true ]]; then
+  yarn install
   yarn build
 fi
 rm -rf pkg/build
