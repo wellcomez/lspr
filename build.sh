@@ -1,2 +1,6 @@
+#!/usr/bin/env bash
 yarn build
-go  build
+pushd build || exit
+go-bindata -o ../bindata/bindata.go -pkg bindata *
+popd || exit
+go build
