@@ -122,7 +122,8 @@ function NewFunction() {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        style={{ backgroundColor: "#FFFFFF", width: 400 }}
+        width={"400px"}
+        style={{ backgroundColor: "#FFFFFF" }}
       >
         {/* {new_toggle_tree(createDir, dir, handle_click_file, handle_click_dir)} */}
         {BasicTree(CreateTreeState(dir), did_click_node)}
@@ -138,17 +139,18 @@ function NewFunction() {
               width: 64,
               height: 64,
             }} />
-          <Content hidden={enabldcode}>
-            <ButtonGroup >
-              <Button icon={<IoMdArrowRoundBack />} onClick={() => {
-                get_prev_image();
-              }} />
-              <Button icon={<IoMdArrowRoundForward />} onClick={() => {
-                get_next_image();
-              }} />
-            </ButtonGroup>
-          </Content>
         </Header>
+        <div hidden={enabldcode} style={{ height: "10px" }}>
+          <ButtonGroup >
+            <Button icon={<IoMdArrowRoundBack />} onClick={() => {
+              get_prev_image();
+            }} />
+            <Button icon={<IoMdArrowRoundForward />} onClick={() => {
+              get_next_image();
+            }} />
+          </ButtonGroup>
+          <span style={{ marginLeft: "20px" }}>{path.parse(imagesrc).name}</span>
+        </div>
         <Content
           style={{
             margin: "24px 16px",
