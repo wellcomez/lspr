@@ -15,24 +15,15 @@ var virtual_root = ""
 func get_file_data(r *http.Request) ([]byte, error) {
 	path := r.URL.Path
 	ss := strings.TrimPrefix(path, "/open")
-	if len(virtual_root) == 0 {
-
-		cur, err := os.Getwd()
-		if err != nil {
-			return []byte{}, err
-		}
-		virtual_root = cur
-	}
 	dir := filepath.Join(virtual_root, ss)
 	return os.ReadFile(dir)
 }
+
+var pwd, _ = os.Getwd()
+var buildroot = filepath.Join(pwd, "build")
+
 func Index(w http.ResponseWriter, r *http.Request) {
-	pwd, err := os.Getwd()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	file := filepath.Join(pwd, "build", "index.html")
+	file := filepath.Join(buildroot, "index.html")
 	data, _ := os.ReadFile(file)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -93,13 +84,6 @@ func newFunction(r *http.Request) (dir, error) {
 		Files:    []file{},
 		Parent:   filepath.Dir(ss),
 	}
-	if len(virtual_root) == 0 {
-		cur, err := os.Getwd()
-		if err != nil {
-			return ret, err
-		}
-		virtual_root = cur
-	}
 	dir := filepath.Join(virtual_root, ss)
 	dirs, err := os.ReadDir(dir)
 	if err != nil {
@@ -136,9 +120,16 @@ func newFunction(r *http.Request) (dir, error) {
 // }
 
 func NewRouter(root string) *mux.Router {
+	if len(root) == 0 {
+		virtual_root, _ = os.Getwd()
+	} else {
+		virtual_root = root
+	}
 	r := mux.NewRouter()
 	r.HandleFunc("/", Index).Methods("GET")
 	r.HandleFunc("/path/{path:.*}", helloWorld).Methods("GET")
 	r.HandleFunc("/open/{path:.*}", openfile).Methods("GET")
+	staticDir := filepath.Join(buildroot, "static")
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 	return r
 }
