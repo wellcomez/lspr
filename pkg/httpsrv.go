@@ -10,23 +10,29 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var virtual_root = ""
+
 func get_file_data(r *http.Request) ([]byte, error) {
 	path := r.URL.Path
 	ss := strings.TrimPrefix(path, "/open")
-	cur, err := os.Getwd()
-	if err != nil {
-		return []byte{}, err
+	if len(virtual_root) == 0 {
+
+		cur, err := os.Getwd()
+		if err != nil {
+			return []byte{}, err
+		}
+		virtual_root = cur
 	}
-	dir := filepath.Join(cur, ss)
+	dir := filepath.Join(virtual_root, ss)
 	return os.ReadFile(dir)
 }
 func Index(w http.ResponseWriter, r *http.Request) {
-	pwd,err:=os.Getwd()
-	if err!=nil{
+	pwd, err := os.Getwd()
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	file:=filepath.Join(pwd,"build","index.html")
+	file := filepath.Join(pwd, "build", "index.html")
 	data, _ := os.ReadFile(file)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -87,17 +93,20 @@ func newFunction(r *http.Request) (dir, error) {
 		Files:    []file{},
 		Parent:   filepath.Dir(ss),
 	}
-	cur, err := os.Getwd()
-	if err != nil {
-		return ret, err
+	if len(virtual_root) == 0 {
+		cur, err := os.Getwd()
+		if err != nil {
+			return ret, err
+		}
+		virtual_root = cur
 	}
-	dir := filepath.Join(cur, ss)
+	dir := filepath.Join(virtual_root, ss)
 	dirs, err := os.ReadDir(dir)
 	if err != nil {
 		return ret, err
 	}
 	if ss == "/" {
-		ret.RootName = filepath.Base(cur)
+		ret.RootName = filepath.Base(virtual_root)
 	}
 	for _, v := range dirs {
 		Path := filepath.Join(dir, v.Name())
@@ -108,9 +117,9 @@ func newFunction(r *http.Request) (dir, error) {
 		files = append(files, file{
 			Parent:  Parent,
 			Name:    v.Name(),
-			DirName: strings.TrimPrefix(dir, cur),
+			DirName: strings.TrimPrefix(dir, virtual_root),
 			IsDir:   v.IsDir(),
-			Path:    strings.TrimPrefix(Path, cur),
+			Path:    strings.TrimPrefix(Path, virtual_root),
 		})
 	}
 	ret.Files = files
@@ -126,7 +135,7 @@ func newFunction(r *http.Request) (dir, error) {
 // 	}
 // }
 
-func NewRouter() *mux.Router {
+func NewRouter(root string) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Index).Methods("GET")
 	r.HandleFunc("/path/{path:.*}", helloWorld).Methods("GET")
