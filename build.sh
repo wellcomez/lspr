@@ -9,8 +9,10 @@ while getopts "w" opt; do
 done
 
 if [[ $build_web == true ]]; then
-  yarn install
-  yarn build
+  if [[ ! -f build/index.html ]]; then
+    yarn install
+    yarn build
+  fi
 fi
 rm -rf pkg/build
 cp -fr build   pkg/
