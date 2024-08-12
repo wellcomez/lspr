@@ -108,6 +108,7 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
     return (
         <FolderTree
             data={testData}
+            indentPixels={10}
             showCheckbox={false}
             onChange={onTreeStateChange}
             onNameClick={onNameClick}
