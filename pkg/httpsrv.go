@@ -194,3 +194,13 @@ func NewRouter(root string) *mux.Router {
 	// r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 	return r
 }
+
+func StartServer(root *string) {
+	r := NewRouter(*root)
+	for i := 18080; i < 30000; i++ {
+		fmt.Printf("Server listening on http://localhost:%d\n", i)
+		if err := http.ListenAndServe(fmt.Sprintf(":%d", i), r); err != nil {
+			fmt.Println(i, "Inused")
+		}
+	}
+}
