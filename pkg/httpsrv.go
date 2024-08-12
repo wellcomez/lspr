@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"zen108.com/lspsrv/bindata"
 )
 
 var virtual_root = ""
@@ -23,8 +24,12 @@ var pwd, _ = os.Getwd()
 var buildroot = filepath.Join(pwd, "build")
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	file := filepath.Join(buildroot, "index.html")
-	data, _ := os.ReadFile(file)
+	var err error
+	data, err := bindata.Asset("index.html")
+	if err != nil {
+		file := filepath.Join(buildroot, "index.html")
+		data, _ = os.ReadFile(file)
+	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// 其他 CORS 相关头
