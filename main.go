@@ -9,6 +9,6 @@ func main() {
 	root := flag.String("root", "", "root path")
 	flag.Parse()
 	// http.HandleFunc("/path", helloWorld) // 注册路由处理函数
-	httpsrv.StartServer(*root,18080)
+	httpsrv.StartServer(*root,18080,nil)
 }
 

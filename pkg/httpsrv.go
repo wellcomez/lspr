@@ -195,9 +195,12 @@ func NewRouter(root string) *mux.Router {
 	return r
 }
 
-func StartServer(root string,port int) {
+func StartServer(root string, port int, cb func(port int)) {
 	r := NewRouter(root)
 	for i := port; i < 30000; i++ {
+		if cb!=nil{
+			cb(i)
+		}
 		fmt.Printf("Server listening on http://localhost:%d\n", i)
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", i), r); err != nil {
 			fmt.Println(i, "Inused")
