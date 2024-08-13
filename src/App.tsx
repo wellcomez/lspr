@@ -14,10 +14,11 @@ import { Directory, ToggleFileTree } from "react-toggle-file-tree";
 import axios from "axios";
 import path from "path-browserify";
 // import "./style.css";
-import { all_language } from "./langType";
+import { all_language, langType } from "./langType";
 import { Dir, fileresp, BasicTree, CreateTreeState } from "./filetree";
 import { IoMdArrowRoundBack, IoMdArrowRoundForward } from "react-icons/io";
 import ButtonGroup from "antd/es/button/button-group";
+import { Editor } from "@monaco-editor/react";
 
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 // var parsePath = require('parse-filepath');
@@ -25,8 +26,17 @@ const get_lang_extention = (lang: [any?]): [any?] => {
   return lang;
 };
 
+function get_lang(filePath: string): langType | undefined {
+  for (let index = 0; index < all_language.length; index++) {
+    const element = all_language[index];
+    let t = element.is(filePath);
+    if (t !== undefined) {
+      return element;
+    }
+  }
+}
 
-function get_lang_type(filePath: string): [any?] {
+function get_lang_extension(filePath: string): [any?] {
   for (let index = 0; index < all_language.length; index++) {
     const element = all_language[index];
     let t = element.is(filePath);
@@ -46,7 +56,12 @@ const App: React.FC = () => {
 };
 
 export default App;
+function convert_lang(s: string): string {
 
+  let t=get_lang(s)
+  if(t){return t.type}
+  return "txt"
+}
 
 function NewFunction() {
   var a: Dir = { root: "/", rootname: "", files: [], parent: "" };
@@ -57,7 +72,8 @@ function NewFunction() {
   const [lang, setLang] = useState(default_ext);
   const [imagesrc, setImagesrc] = useState("");
   const [enabldcode, setEnabledCode] = useState(true);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState("xdafdafadfadfasdfasdfasdfasf");
+  const [filepath, setFilepath] = useState("");
   // const [rootname, setRootName] = useState("");
   // const [root, setRoot] = useState("/");
   const setData = (data: Dir) => {
@@ -78,7 +94,8 @@ function NewFunction() {
         return;
       }
       setEnabledCode(true);
-      let ext = get_lang_type(root);
+      setFilepath(root)
+      let ext = get_lang_extension(root);
       setLang(ext);
       const response = await axios.get(u, { responseType: "text" }); // 使用 Axios 发起请
       console.log(response.data);
@@ -165,12 +182,24 @@ function NewFunction() {
               <img src={imagesrc}></img>
             </div>
           </Content>
-          <CodeMirror
+          <Content hidden={!enabldcode}>
+            <Editor
+              width="100%"
+              height="90vh"
+              defaultLanguage={convert_lang(filepath)}
+              defaultValue=""
+              // theme="vs-dark"
+              value={content}
+              path={filepath}
+              language={convert_lang(filepath)}
+            />
+          </Content>
+          {/* <CodeMirror
             hidden={!enabldcode}
             height="800px"
             theme={monokai}
             value={content}
-            extensions={get_lang_extention(lang)} />
+            extensions={get_lang_extention(lang)} /> */}
         </Content>
 
 

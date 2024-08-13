@@ -34,7 +34,7 @@ import { IoLogoCss3 } from "react-icons/io5";
 import { FaHtml5 } from "react-icons/fa6";
 import { Aarch64Plain, GoOriginal, GoLine, GolandPlain } from 'devicons-react'
 
-class langType {
+export class langType {
   constructor(
     extset: Array<string>,
     fileset: Array<string>,
@@ -77,7 +77,7 @@ go_ext.devicon = true
 const cpp_ext = new langType(
   [".c", ".cpp", ".h", ".hpp"],
   [],
-  "cpp",
+  "c++",
   [cpp()],
   TbBrandCpp,
 );
@@ -85,7 +85,14 @@ const python_ext = new langType([".py"], [], "python", [python()], DiPython);
 const js_ext = new langType(
   [".js", ".ts", ".tsx"],
   [],
-  "js",
+  "javascript",
+  [javascript({ jsx: true })],
+  DiJavascript1,
+);
+const ts_ext = new langType(
+  [".ts", ".tsx"],
+  [],
+  "typescript",
   [javascript({ jsx: true })],
   DiJavascript1,
 );
@@ -98,7 +105,7 @@ html_ext.devicon = true;
 const markdown_ext = new langType(
   [".md"],
   [],
-  "md",
+  "markdown",
   [markdown({ base: markdownLanguage, codeLanguages: languages })],
   SiMarkdown,
 );
@@ -113,6 +120,7 @@ var all_language = [
   css_ext,
   yaml_ext,
   git_ext,
-  html_ext
+  html_ext,
+  ts_ext
 ];
 export { all_language };
