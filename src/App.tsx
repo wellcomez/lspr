@@ -95,8 +95,11 @@ function NewFunction() {
   //   return htmlReactParser(prop.html) ;
   // }
 
+  const url_open_dir = (port: string) => "http://localhost:" + port + "/path";
+  const url_open_file = (port: string) => "http://localhost:" + port + "/open";
   const open_file = async (root: string) => {
-    let u = url_open_file + root;
+    let port = Math.max(parseInt(window.location.port), 18080)
+    let u = url_open_file(port.toString()) + root;
     try {
       if (isPng(u)) {
         setImagesrc(u);
@@ -128,7 +131,8 @@ function NewFunction() {
   };
   const open_dir = async (root: string) => {
     try {
-      let u = url_open_dir + root;
+      let port = Math.max(parseInt(window.location.port), 18080)
+      let u = url_open_dir(port.toString()) + root;
       const response = await axios.get(u); // 使用 Axios 发起请求
 
       // const response = await fetch('https://api.example.com/data'); // 使用 fetch API 发起请求
@@ -145,8 +149,6 @@ function NewFunction() {
       open_file(node.Path);
     }
   };
-  const url_open_dir = "http://localhost:18080/path";
-  const url_open_file = "http://localhost:18080/open";
   useEffect(() => {
     open_dir(dir.root);
   }, []);
