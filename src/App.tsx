@@ -116,6 +116,7 @@ function NewFunction() {
   const url_open_dir = (port: string) => "http://localhost:" + port + "/path";
   const url_open_file = (port: string) => "http://localhost:" + port + "/open";
   const open_file = async (root: string) => {
+    let file_ext = path.parse(root).ext
     let port = Math.max(parseInt(window.location.port), 18080)
     let u = url_open_file(port.toString()) + root;
     try {
@@ -134,7 +135,11 @@ function NewFunction() {
       setLang(ext);
       const response = await axios.get(u, { responseType: "text" }); // 使用 Axios 发起请
       console.log(response.data);
-      if (lang && lang.type == "markdown") {
+      let is_markdown = lang && lang.type == "markdown";
+      if (file_ext == ".puml") {
+        is_markdown = true
+      }
+      if (is_markdown) {
         set_view_type(view_type_markdown)
         var ss = mdIt.render(response.data)
         setContent(ss);
