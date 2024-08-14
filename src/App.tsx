@@ -28,7 +28,9 @@ var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 const mdIt = MarkdownIt({
   highlight: function (str: string, lang: string): string {
     if (lang == "plantuml") {
-      return mdIt.render(str);
+      return "<div class=\"plantuml\">" +
+        mdIt.render(str) +
+        "</div>"
     }
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -137,9 +139,12 @@ function NewFunction() {
       console.log(response.data);
       let is_markdown = lang && lang.type == "markdown";
       if (file_ext == ".puml") {
-        is_markdown = true
+        set_view_type(view_type_markdown)
+        var ss = mdIt.render(response.data)
+        var html="<div class=\"plantuml\">" + ss + "</div>"
+        setContent(html)
       }
-      if (file_ext == ".svg") {
+      else if (file_ext == ".svg") {
         set_view_type(view_type_markdown)
         let ss = response.data
         setContent(ss);
