@@ -139,7 +139,12 @@ function NewFunction() {
       if (file_ext == ".puml") {
         is_markdown = true
       }
-      if (is_markdown) {
+      if (file_ext == ".svg") {
+        set_view_type(view_type_markdown)
+        let ss = response.data
+        setContent(ss);
+      }
+      else if (is_markdown) {
         set_view_type(view_type_markdown)
         var ss = mdIt.render(response.data)
         setContent(ss);
