@@ -58,11 +58,13 @@ const App: React.FC = () => {
 export default App;
 function convert_lang(s: string): string {
 
-  let t=get_lang(s)
-  if(t){return t.type}
+  let t = get_lang(s)
+  if (t) { return t.type }
   return "txt"
 }
-
+const view_type_markdonw = "markdown";
+const view_type_image = "image";
+const view_type_code = "code"
 function NewFunction() {
   var a: Dir = { root: "/", rootname: "", files: [], parent: "" };
   const [collapsed, setCollapsed] = useState(false);
@@ -71,7 +73,7 @@ function NewFunction() {
   var default_ext: [any?] = [];
   const [lang, setLang] = useState(default_ext);
   const [imagesrc, setImagesrc] = useState("");
-  const [enabldcode, setEnabledCode] = useState(true);
+  const [view_type, set_view_type] = useState(view_type_code);
   const [content, setContent] = useState("xdafdafadfadfasdfasdfasdfasf");
   const [filepath, setFilepath] = useState("");
   // const [rootname, setRootName] = useState("");
@@ -90,10 +92,10 @@ function NewFunction() {
     try {
       if (isPng(u)) {
         setImagesrc(u);
-        setEnabledCode(false);
+        set_view_type(view_type_image)
         return;
       }
-      setEnabledCode(true);
+      set_view_type(view_type_code)
       setFilepath(root)
       let ext = get_lang_extension(root);
       setLang(ext);
@@ -157,7 +159,7 @@ function NewFunction() {
               height: 64,
             }} />
         </Header>
-        <div hidden={enabldcode} style={{ height: "10px" }}>
+        <div hidden={view_type != view_type_image} style={{ height: "10px" }}>
           <ButtonGroup >
             <Button icon={<IoMdArrowRoundBack />} onClick={() => {
               get_prev_image();
@@ -177,12 +179,12 @@ function NewFunction() {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Content hidden={enabldcode}>
+          <Content hidden={view_type_image != view_type}>
             <div>
               <img src={imagesrc}></img>
             </div>
           </Content>
-          <Content hidden={!enabldcode}>
+          <Content hidden={view_type != view_type_code}>
             <Editor
               width="100%"
               height="90vh"
