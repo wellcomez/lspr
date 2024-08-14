@@ -22,9 +22,23 @@ import ButtonGroup from "antd/es/button/button-group";
 import { Editor } from "@monaco-editor/react";
 import MarkdownIt from "markdown-it";
 import { plantuml } from "@mdit/plugin-plantuml";
-
+import hljs from 'highlight.js' // https://highlightjs.org
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
-const mdIt = MarkdownIt().use(plantuml);
+const mdIt = MarkdownIt({
+  highlight: function (str: string, lang: string): string {
+    if (lang=="plantuml"){
+      return mdIt.render(str);
+    }
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return '<pre><code class="hljs">' +
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>';
+      } catch (__) { }
+    }
+    return '<pre><code class="hljs">' + mdIt.utils.escapeHtml(str) + '</code></pre>';
+  }
+}).use(plantuml);
 // var parsePath = require('parse-filepath');
 const get_lang_extention = (lang: [any?]): [any?] => {
   return lang;
