@@ -96,6 +96,7 @@ const ts_ext = new langType(
   [javascript({ jsx: true })],
   DiJavascript1,
 );
+const shell_ext = new langType([".sh"], [], "shell", [], IoLogoCss3);
 const css_ext = new langType([".css"], [], "css", [css()], IoLogoCss3);
 const json_ext = new langType([".json"], [], "json", [json()], TbJson);
 const yaml_ext = new langType([".yml", ".yaml"], [], "yaml", [yaml()], SiYaml);
@@ -110,6 +111,7 @@ const markdown_ext = new langType(
   SiMarkdown,
 );
 var all_language = [
+  shell_ext,
   go_ext,
   js_ext,
   go_ext,

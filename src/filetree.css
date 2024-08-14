@@ -22,8 +22,8 @@ svg.html {
     color: rgb(127, 204, 20)
 }
 
-.iconContainer svg {
-    padding-right: 2px;
+.EditableName{
+    padding-left: 8px;
 }
 
 svg.icon.CaretDownIcon {
