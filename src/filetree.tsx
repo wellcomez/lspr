@@ -124,15 +124,15 @@ const BasicTree = (testData: NodeDataFile, open: (file: fileresp) => void) => {
     );
 };
 export function CreateTreeState(dir: Dir): NodeDataFile {
-    var Path = path.join(dir.parent, dir.root);
+    // var Path = path.join(dir.parent, dir.root);
     var f: fileresp = {
-        Path: Path,
+        Path: dir.root,
         IsDir: false,
-        Name: dir.rootname,
+        Name: dir.root,
         parent: dir.parent,
         dirname: dir.rootname,
     };
-    let ret = new NodeDataFile(dir.rootname, f);
+    let ret = new NodeDataFile(f.Name, f);
     ret.isOpen = true;
     let isOpen = false;
     if (ret.children) {
