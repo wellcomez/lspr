@@ -11,6 +11,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { monokai } from "@uiw/codemirror-theme-monokai";
 
 import { Directory, ToggleFileTree } from "react-toggle-file-tree";
+import htmlReactParser from 'html-react-parser';
 import axios from "axios";
 import path from "path-browserify";
 // import "./style.css";
@@ -19,8 +20,11 @@ import { Dir, fileresp, BasicTree, CreateTreeState } from "./filetree";
 import { IoMdArrowRoundBack, IoMdArrowRoundForward } from "react-icons/io";
 import ButtonGroup from "antd/es/button/button-group";
 import { Editor } from "@monaco-editor/react";
-import Markdown from "react-markdown";
+import MarkdownIt from "markdown-it";
+import { plantuml } from "@mdit/plugin-plantuml";
+
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
+const mdIt = MarkdownIt().use(plantuml);
 // var parsePath = require('parse-filepath');
 const get_lang_extention = (lang: [any?]): [any?] => {
   return lang;
@@ -74,7 +78,7 @@ function NewFunction() {
   const [lang, setLang] = useState(default_ext);
   const [imagesrc, setImagesrc] = useState("");
   const [view_type, set_view_type] = useState(view_type_code);
-  const [content, setContent] = useState("xdafdafadfadfasdfasdfasdfasf");
+  const [content, setContent] = useState("");
   const [filepath, setFilepath] = useState("");
   // const [rootname, setRootName] = useState("");
   // const [root, setRoot] = useState("/");
@@ -87,6 +91,10 @@ function NewFunction() {
     return imageset.has(ext);
   }
 
+  // function HtmlToJsx(prop: { html: string }):JsxElement {
+  //   return htmlReactParser(prop.html) ;
+  // }
+
   const open_file = async (root: string) => {
     let u = url_open_file + root;
     try {
@@ -96,11 +104,7 @@ function NewFunction() {
         return;
       }
       let lang = get_lang(root)
-      if (lang && lang.type == "markdown") {
-        set_view_type(view_type_markdown)
-      } else {
-        set_view_type(view_type_code)
-      }
+
       setFilepath(root)
       let ext: [any?] = []
       if (lang) {
@@ -109,7 +113,14 @@ function NewFunction() {
       setLang(ext);
       const response = await axios.get(u, { responseType: "text" }); // 使用 Axios 发起请
       console.log(response.data);
-      setContent(response.data);
+      if (lang && lang.type == "markdown") {
+        set_view_type(view_type_markdown)
+        var ss = mdIt.render(response.data)
+        setContent(ss);
+      } else {
+        set_view_type(view_type_code)
+        setContent(response.data);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -189,9 +200,12 @@ function NewFunction() {
           }}
         >
           <Content hidden={view_type_markdown != view_type}>
-            <Markdown >
+            {/* <Markdown >
               {content}
-            </Markdown>
+            </Markdown> */}
+            <div>
+              {htmlReactParser(content)}
+            </div>
           </Content>
           <Content hidden={view_type_image != view_type}>
             <div>
