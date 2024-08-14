@@ -23,16 +23,20 @@ import { Editor } from "@monaco-editor/react";
 import MarkdownIt from "markdown-it";
 import { plantuml } from "@mdit/plugin-plantuml";
 import hljs from 'highlight.js' // https://highlightjs.org
+import 'highlight.js/styles/github.css';
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 const mdIt = MarkdownIt({
   highlight: function (str: string, lang: string): string {
-    if (lang=="plantuml"){
+    if (lang == "plantuml") {
       return mdIt.render(str);
     }
     if (lang && hljs.getLanguage(lang)) {
       try {
         return '<pre><code class="hljs">' +
-          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          lang +
+          "<br>" +
+          "<br>"
+          + hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
           '</code></pre>';
       } catch (__) { }
     }
