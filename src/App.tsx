@@ -19,7 +19,7 @@ import { Dir, fileresp, BasicTree, CreateTreeState } from "./filetree";
 import { IoMdArrowRoundBack, IoMdArrowRoundForward } from "react-icons/io";
 import ButtonGroup from "antd/es/button/button-group";
 import { Editor } from "@monaco-editor/react";
-
+import Markdown from "react-markdown";
 var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 // var parsePath = require('parse-filepath');
 const get_lang_extention = (lang: [any?]): [any?] => {
@@ -62,7 +62,7 @@ function convert_lang(s: string): string {
   if (t) { return t.type }
   return "txt"
 }
-const view_type_markdonw = "markdown";
+const view_type_markdown = "markdown";
 const view_type_image = "image";
 const view_type_code = "code"
 function NewFunction() {
@@ -95,9 +95,17 @@ function NewFunction() {
         set_view_type(view_type_image)
         return;
       }
-      set_view_type(view_type_code)
+      let lang = get_lang(root)
+      if (lang && lang.type == "markdown") {
+        set_view_type(view_type_markdown)
+      } else {
+        set_view_type(view_type_code)
+      }
       setFilepath(root)
-      let ext = get_lang_extension(root);
+      let ext: [any?] = []
+      if (lang) {
+        ext = lang.extension
+      }
       setLang(ext);
       const response = await axios.get(u, { responseType: "text" }); // 使用 Axios 发起请
       console.log(response.data);
@@ -170,6 +178,7 @@ function NewFunction() {
           </ButtonGroup>
           <span style={{ marginLeft: "20px" }}>{path.parse(imagesrc).name}</span>
         </div>
+
         <Content
           style={{
             margin: "24px 16px",
@@ -179,6 +188,11 @@ function NewFunction() {
             borderRadius: borderRadiusLG,
           }}
         >
+          <Content hidden={view_type_markdown != view_type}>
+            <Markdown >
+              {content}
+            </Markdown>
+          </Content>
           <Content hidden={view_type_image != view_type}>
             <div>
               <img src={imagesrc}></img>
