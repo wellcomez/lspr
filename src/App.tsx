@@ -2,15 +2,15 @@ import React, { SetStateAction, useEffect, useState } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+  // UploadOutlined,
+  // UserOutlined,
+  // VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Button, ConfigProvider, Layout, Menu, theme } from "antd";
-import CodeMirror from "@uiw/react-codemirror";
-import { monokai } from "@uiw/codemirror-theme-monokai";
+// import CodeMirror from "@uiw/react-codemirror";
+// import { monokai } from "@uiw/codemirror-theme-monokai";
 
-import { Directory, ToggleFileTree } from "react-toggle-file-tree";
+// import { Directory, ToggleFileTree } from "react-toggle-file-tree";
 import htmlReactParser from 'html-react-parser';
 import axios from "axios";
 import path from "path-browserify";
@@ -28,9 +28,7 @@ var imageset = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico"]);
 const mdIt = MarkdownIt({
   highlight: function (str: string, lang: string): string {
     if (lang == "plantuml") {
-      return "<div class=\"plantuml\">" +
-        mdIt.render(str) +
-        "</div>"
+      return mdIt.render(str);
     }
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -139,12 +137,9 @@ function NewFunction() {
       console.log(response.data);
       let is_markdown = lang && lang.type == "markdown";
       if (file_ext == ".puml") {
-        set_view_type(view_type_markdown)
-        var ss = mdIt.render(response.data)
-        var html="<div class=\"plantuml\">" + ss + "</div>"
-        setContent(html)
+        is_markdown = true
       }
-      else if (file_ext == ".svg") {
+      if (file_ext == ".svg") {
         set_view_type(view_type_markdown)
         let ss = response.data
         setContent(ss);
