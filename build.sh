@@ -13,5 +13,5 @@ if [[ $build_web == true ]]; then
   yarn build
 fi
 rm -rf pkg/build
-cp -fr build   pkg/
+cp -fr dist pkg/build
 go build
